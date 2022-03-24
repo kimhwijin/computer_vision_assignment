@@ -7,7 +7,7 @@ IMAGE_SIZE = (300, 400)
 SRC_PATCH_SIZE = 9
 DST_PATCH_SIZE = 27
 
-def get_patches():
+def get_patches(src_patch_size=SRC_PATCH_SIZE, dst_patch_size=DST_PATCH_SIZE):
     image_paths = glob.glob("*.jpg")
     src_image, dst_image = load_and_resize_image(image_paths)
     src_patches, dst_patches = [], []
@@ -36,22 +36,22 @@ def check_outline(x, y, patch_size):
     if x - patch_size // 2 < 0:
         x_1 = 0
         x_2 = patch_size
-    elif (x + patch_size // 2) > max_x:
+    elif (x + patch_size // 2) >= max_x:
         x_1 = max_x - patch_size
         x_2 = max_x
     else:
         x_1 = x - patch_size // 2
-        x_2 = x + patch_size // 2
+        x_2 = x + patch_size // 2 + 1
     
     if y - patch_size // 2 < 0:
         y_1 = 0
         y_2 = patch_size
-    elif (y + patch_size // 2) > max_y:
+    elif (y + patch_size // 2) >= max_y:
         y_1 = max_y - patch_size
         y_2 = max_y
     else:
         y_1 = y - patch_size // 2
-        y_2 = y + patch_size // 2
+        y_2 = y + patch_size // 2 + 1
     return (x_1, x_2) , (y_1, y_2)
 
 
