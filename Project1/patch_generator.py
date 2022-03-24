@@ -59,3 +59,4 @@ def draw_rec(event, x, y, flags, param, img, patch, patch_size):
     if event == cv2.EVENT_LBUTTONDOWN:
         (x_1, x_2), (y_1, y_2) = check_outline(x, y, patch_size)
         patch.append(cv2.rectangle(img, (x_1-1,y_1-1), (x_2,y_2), (0,255,0), 1)[y_1:y_2, x_1:x_2, :])
+        print("added patch")

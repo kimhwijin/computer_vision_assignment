@@ -1,8 +1,5 @@
-import enum
-from operator import mod
 import numpy as np
 import matplotlib.pyplot as plt
-
 def get_histogram(src_patches, dst_patches):
     #src patch : n x 9 x 9 x 3 ( expect n = 4 )
     #dst patch : n x 27 x 27 x 3 ( expect n = 4 )
@@ -22,20 +19,25 @@ def get_histogram_seperate_channel(src_patches, dst_patches):
     # n, bins-1, c
     src_hist = np.empty((src_patches.shape[0], len(bins) - 1, src_patches.shape[-1]), np.float32)
     # w, n, bins-1, c
-    dst_hist = np.empty((len(window_index), dst_patches.shape[0], len(bins) - 1, dst_patches.shape[-1]), np.float32)
+    dst_hist = np.empty((dst_patches.shape[0], len(window_index), len(bins) - 1, dst_patches.shape[-1]), np.float32)
 
     t_src_patches = np.transpose(src_patches, (0, 3, 1, 2))
-
+    
     for n, src_patch in enumerate(t_src_patches):
         for c, src_channel in enumerate(src_patch):
-            src_hist[n,:,c], _ = np.histogram(src_channel, bins=bins)
+            hist, _ = np.histogram(src_channel, bins=bins)
+            src_hist[n,:,c] = hist / np.sum(hist)
 
     t_dst_patches = np.transpose(dst_patches, (0, 3, 1, 2))
-    
+
     for n, dst_patch in enumerate(t_dst_patches):
         for c, dst_channel in enumerate(dst_patch):
             for w, (h_s, h_e, w_s, w_e) in enumerate(window_index):
-                dst_hist[w, n, :, c], _ = np.histogram(dst_channel[h_s:h_e,w_s:w_e], bins=bins)
+                hist, _ = np.histogram(dst_channel[h_s:h_e,w_s:w_e], bins=bins)
+                dst_hist[n, w, :, c] = hist / np.sum(hist)
+
+    print(t_src_patches.shape, t_dst_patches.shape)
+    print(src_hist.shape, dst_hist.shape)
 
     return src_hist, dst_hist
 
@@ -59,6 +61,8 @@ def build_2d_window_index(src_patch_shape, dst_patch_shape):
     
     return window_index
         
+
+
 
 
     
