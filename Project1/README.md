@@ -95,4 +95,13 @@
 <img src="https://user-images.githubusercontent.com/33340741/160865294-52f2f3cc-fbea-4c1e-a014-2856d1cd06b3.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865296-c7fed7b0-4045-4278-bb51-40b051fe0af9.png" width="400" height="400"/>
 <img src="https://user-images.githubusercontent.com/33340741/160865299-eb1a021f-f3fc-4c5a-94cd-0e5990efa4af.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865305-1a01ff45-40d3-4bea-b2fb-0e649519dee4.png" width="400" height="400"/>
 
+***
+
+### source patch 별, 채널별, source patch 의 histogram 과 단일 patch loss patch 의 histogram
+<img src="https://user-images.githubusercontent.com/33340741/160865241-f42f8e38-991a-4f53-8351-35ee6c1b13e7.png" width="450" height="300"/><img src="https://user-images.githubusercontent.com/33340741/160865246-18a796a7-e2ee-4371-b1d8-9b9db0772bf2.png" width="450" height="300"/>
+<img src="https://user-images.githubusercontent.com/33340741/160865252-c014b5c2-7cc3-4792-9090-aa6b99310560.png" width="450" height="300"/><img src="https://user-images.githubusercontent.com/33340741/160865257-598e73c9-7665-4018-b027-30fef8e6fc45.png" width="450" height="300"/>
+ 
+### source image patch 별, 단일 patch 의 loss 값 비교
+<img src="https://user-images.githubusercontent.com/33340741/160865261-13b5cdd8-c7a9-45a6-8403-d79c7fe9cac4.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865264-0d79b070-94a1-4d93-9d9a-ca5b47e3edcc.png" width="400" height="400"/>
+<img src="https://user-images.githubusercontent.com/33340741/160865267-05525326-ffd7-46f4-b3cb-8676f620f60c.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865270-59c0c6ac-d794-4eb1-8d60-bd050e47b0c5.png" width="400" height="400"/>
 
