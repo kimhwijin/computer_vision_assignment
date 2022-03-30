@@ -13,6 +13,18 @@ def get_histogram(src_patches, dst_patches):
         plt.hist(hist, bin_edges)
         plt.show()
 
+def get_histogram_seperate_channel_single_patch(patches):
+    n_channel = patches.shape[-1]
+    hists = np.empty((patches.shape[0], len(BINS)-1, n_channel), np.float32)
+
+    for n, patch in enumerate(patches):
+        for c in range(n_channel):
+            hist, _ = np.histogram(patch[:, :,c], bins=BINS)
+            hists[n, :, c] = hist / np.sum(hist)
+
+    return hists
+
+
 def get_histogram_seperate_channel(src_patches, dst_patches):
     # n x 9 x 9 x 3
     # n x 27 x 27 x 3
