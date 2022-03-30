@@ -1,4 +1,10 @@
-# computer_vision_assignment
+## computer_vision_assignment
+
+- 4-1 컴퓨터 비전 과목의 실습 Project를 위한 Repository
+- 언어 : python
+- 프레임워크 : openCV, numpy, matplotlib
+
+
 
 ## [Project 1](https://github.com/kimhwijin/computer_vision_assignment/tree/master/Project1)
 
