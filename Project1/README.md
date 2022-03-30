@@ -106,14 +106,18 @@
 <img src="https://user-images.githubusercontent.com/33340741/160865267-05525326-ffd7-46f4-b3cb-8676f620f60c.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865270-59c0c6ac-d794-4eb1-8d60-bd050e47b0c5.png" width="400" height="400"/>
 
 
+***
+
 |min loss|정답 patch|예상 patch|
-|sliding window|||
+| :-: | :-: | :-: |
+|sliding window|-|-|
 |2.033|1|1|
 |1.106|2|2|
 |5.703|3|3|
 |5.108|4|3|
-|single patch|||
-|2.033|1|1|
-|1.106|2|2|
-|5.703|3|3|
-|5.108|4|3|
+|single patch|-|-|
+|8.537|1|2|
+|2.664|2|2|
+|8.640|3|2|
+|10.248|4|2|
+
