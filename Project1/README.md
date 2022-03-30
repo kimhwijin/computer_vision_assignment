@@ -105,3 +105,15 @@
 <img src="https://user-images.githubusercontent.com/33340741/160865261-13b5cdd8-c7a9-45a6-8403-d79c7fe9cac4.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865264-0d79b070-94a1-4d93-9d9a-ca5b47e3edcc.png" width="400" height="400"/>
 <img src="https://user-images.githubusercontent.com/33340741/160865267-05525326-ffd7-46f4-b3cb-8676f620f60c.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865270-59c0c6ac-d794-4eb1-8d60-bd050e47b0c5.png" width="400" height="400"/>
 
+
+|min loss|정답 patch|예상 patch|
+|sliding window|||
+|2.033|1|1|
+|1.106|2|2|
+|5.703|3|3|
+|5.108|4|3|
+|single patch|||
+|2.033|1|1|
+|1.106|2|2|
+|5.703|3|3|
+|5.108|4|3|
