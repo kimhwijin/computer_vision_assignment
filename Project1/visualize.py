@@ -28,3 +28,10 @@ def plot_src_min_hist(src_hist, min_hist, min_loss, src_index):
     
     plt.show()
     
+
+def plot_loss(min_loss, src_patch):
+    min_loss_patch = np.argmin(min_loss, axis=0) + 1
+    plt.figure(figsize=(5,5))
+    plt.bar(range(1,5), min_loss)
+    plt.title("src patch : {}, min loss patch : {}".format(src_patch, min_loss_patch))
+    plt.show()
