@@ -1,15 +1,15 @@
 
-## Project 1
+# Project 1
 
-Project 목표 : 동일한 객체를 회전시킨 두개의 이미지 1st.jpg, 2nd.jpg 의 대응되는 각 코너를 찾아낸다. <br>
+## Project 목표 : 동일한 객체를 회전시킨 두개의 이미지 1st.jpg, 2nd.jpg 의 대응되는 각 코너를 찾아낸다. <br>
 
-기본 전제
+## 기본 전제
 - patch size 는 9x9 이다.
 - patch 는 마우스 클릭을 통해 저장한다.
 - RGB 3채널 이미지이다.
 
 
-고안한 방식
+## 고안한 방식
 - 첫번째 image를 source image, 두번째 이미지를 destination image 로 지정한다.
 - 첫번째 image의 patch 는 마우스를 통해서 9x9 패치 4개와 각 패치별 RGB 3채널 즉 4x9x9x3 형태의 패치를 생성한다.
 - 두번째 image에서는 마우스 클릭한 부분에 9x9 patch 를 생성하는 대신에 27x27 크기의 넓은 범위의 구간을 지정해 sliding window 형태로 patch 를 생성한다. 즉 27x27 의 구간에서 9x9 패치를 한픽셀씩 움직이면서 총 361개의 patch를 생성한다. 결국 4x361x9x9x3 의 patch 가 만들어진다.
@@ -17,7 +17,7 @@ Project 목표 : 동일한 객체를 회전시킨 두개의 이미지 1st.jpg, 2
 - 총 4x4 의 loss 행렬이 만들어지고, 각 값은 첫번째 이미지의 각 patch와 두번째 이미지의 각 대표 patch 사이의 loss 값을 나타낸다. 이때 대표 patch는 361개의 patch 가운데 최소 loss를 가지는 patch 를 의미한다.
 - loss 행렬의 argmin by axis=1 을 통해 각 코너에 가장 가깝게 대응되는 코너를 찾는다.
 
-구현 방식
+## 구현 방식
 - sliding window 는 window index 를 만들어서 361x4 형태로 x,y와 처음과 끝 인덱스 4개를 저장해서 사용한다.
 - 채널은 유지를 하고, 각 채널의 loss 는 평균을 취한다.
 - loss 는 각 patch (9x9x3) 들의 pixel histogram (bins-1, 3) 을 구한다. histogram의 bins 는 0 부터 255 까지 block 은 5 pixel 씩으로 지정한다.
@@ -26,12 +26,12 @@ Project 목표 : 동일한 객체를 회전시킨 두개의 이미지 1st.jpg, 2
 - 첫번째 histogram propability 4x50x3, 두번째 histogram propbability 4x50x3 간의 loss 는 4개의 코너별, 채널별 계산을 수행하므로 총 4x4x3 번의 계산을 수행한다.
 - 그렇게 구한 loss 는 4x4 행렬을 띄고, loss[i, j] 는 첫번재 이미지의 i 번째 코너와 두번째 이미지의 j 번재 코너의 histogram probability 의 loss 를 가진다.
 
-실험 방식
+## 실험 방식
 - sliding window 를 사용하는 방식과, 그냥 9x9 패치를 사용하는 방식의 차이를 비교한다.
 - 두번째 패치를 생성할때, 클릭한 기준으로 27x27 패치와 9x9 패치를 동시에 생성해서 저장한다.
 - sliding window 는 위 방색대로 최소 loss 를 구하고, 9x9 패치는 하나이기 때문에 직접 loss를 비교한다.
 
-구현
+## 구현
 - main.py
     1. 패치 정보를 가진 src_patches, dst_patches, compare_pathces를 구한다. 각 4x9x9x3, 4x27x27x3, 4x9x9x3 이다.
     2. histogram propability 정보를 가진 src_hists, dst_hists, compare_hists 를 구한다. 각 4x50x3, 4x361x50x3, 4x50x3 이다.
@@ -79,6 +79,20 @@ Project 목표 : 동일한 객체를 회전시킨 두개의 이미지 1st.jpg, 2
         1. 첫번째 이미지의 patch 순서와 loss 를 입력받아 loss 를 plot 하고, 최소 loss 를 통해서 patch 에 대응되는 patch를 결정한다.
 
 
+
+## 실험 결과
+
+### 마우스 patch 이미지
+|source image|destination image|
+|:-:|:-:|
+|<img width="300" alt="스크린샷 2022-03-30 오후 11 30 09" src="https://user-images.githubusercontent.com/33340741/160865190-6058dc00-da1a-4eb6-a0bc-f3b3ee81ad8a.png">|<img width="293" alt="스크린샷 2022-03-30 오후 11 30 14" src="https://user-images.githubusercontent.com/33340741/160865227-a02df521-25ab-49a1-88a0-9c81751104ef.png">|
+
+### source patch 별, 채널별, source patch 의 histogram 과 destination min loss patch 의 histogram
+<img src="https://user-images.githubusercontent.com/33340741/160865273-96fbd439-4351-4237-a5f9-225a0cc8d5e3.png" width="450" height="300"/><img src="https://user-images.githubusercontent.com/33340741/160865279-cdcd0ee2-8500-4bd2-9bdc-6711d22639f5.png" width="450" height="300"/>
+<img src="https://user-images.githubusercontent.com/33340741/160865284-aec771af-2523-4fea-8841-094a11a0c4ec.png" width="450" height="300"/><img src="https://user-images.githubusercontent.com/33340741/160865290-0709159b-ce4c-4f15-9c29-4e2415742795.png" width="450" height="300"/>
  
+### source image patch 별, destination image min loss patch 의 loss 값 비교
+<img src="https://user-images.githubusercontent.com/33340741/160865294-52f2f3cc-fbea-4c1e-a014-2856d1cd06b3.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865296-c7fed7b0-4045-4278-bb51-40b051fe0af9.png" width="400" height="400"/>
+<img src="https://user-images.githubusercontent.com/33340741/160865299-eb1a021f-f3fc-4c5a-94cd-0e5990efa4af.png" width="400" height="400"/><img src="https://user-images.githubusercontent.com/33340741/160865305-1a01ff45-40d3-4bea-b2fb-0e649519dee4.png" width="400" height="400"/>
 
 
