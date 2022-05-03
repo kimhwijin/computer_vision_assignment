@@ -53,7 +53,6 @@ def get_histogram_seperate_channel(src_patches, dst_patches):
 
     print(t_src_patches.shape, t_dst_patches.shape)
     print(src_hist.shape, dst_hist.shape)
-
     return src_hist, dst_hist
 
 def build_2d_window_index(src_patch_shape, dst_patch_shape):

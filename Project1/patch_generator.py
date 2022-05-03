@@ -1,5 +1,4 @@
 import glob
-from hashlib import new
 import cv2
 import numpy as np
 from functools import partial

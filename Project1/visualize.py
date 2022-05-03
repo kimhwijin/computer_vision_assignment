@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from histogram import PROP_BINS
+from histogram import BINS
 import numpy as np
 
 
@@ -19,12 +19,16 @@ def plot_src_min_hist(src_hist, min_hist, min_loss, src_index):
     for c in range(3):
         plt.subplot(3, 5, c*5+1)
         plt.title("src hist {}".format(src_index))
-        plt.hist(src_hist[:, c], PROP_BINS)
+        plt.bar(BINS[:-1], src_hist[:, c])
+        plt.xlim((0,255))
+        plt.ylim((0,1))
         for d in range(4):
             plt.subplot(3, 5, c*5+d+2)
             if min_loss_arg == d + 1:
                 plt.title("min loss hist {:.3f}".format(min_loss[min_loss_arg-1]))
-            plt.hist(min_hist[d, :, c], PROP_BINS)
+            plt.xlim((0,255))
+            plt.ylim((0,1))
+            plt.bar(BINS[:-1], min_hist[d, :, c])
     
     plt.show()
     
