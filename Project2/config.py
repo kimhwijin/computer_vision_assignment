@@ -1,10 +1,14 @@
+from enum import Enum, auto
 import os
+from enums import MASK_STYLE
 
 class Config:
     DATA_DIR = os.path.join(os.getcwd(), "dataset")
     TRAIN_DIR = os.path.join(DATA_DIR, "train")
     TRAIN_CSV = os.path.join(DATA_DIR, "train.csv")
     TEST_DIR = os.path.join(DATA_DIR, "test")
+    SAVE_DIR = os.path.join(DATA_DIR, "save")
+
     SAMPLE_SUBMIT_CSV = os.path.join(DATA_DIR, "sample_submission.csv")
     CLASSES = ("Large Bowel", "Small Bowel", "Stomach")
     SF_CLASSES = ("lb", "sb", "st")
@@ -13,3 +17,6 @@ class Config:
     NFOLD = 8
     IMAGE_SHAPE = (256, 256)
     SEGMENT_SHAPE = (256, 256)
+    MASK_STYLE = MASK_STYLE.MULTI_CLASS_ONE_LABEL
+    MASK_DIR = os.path.join(SAVE_DIR, MASK_STYLE.name, "mask")
+

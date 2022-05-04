@@ -3,6 +3,7 @@ import tensorflow as tf
 import cv2
 
 class RLE:
+    @staticmethod
     def decode(encoded: str, shape: list, color=1)->np.ndarray:
 
         np_encoded = np.array(encoded.split(), dtype=int)
@@ -20,7 +21,7 @@ class RLE:
         for low, high in zip(pixel_starts, pixel_ends):
             decoded[low:high] = color
         return decoded.reshape(shape)
-    
+    @staticmethod
     def decode_tf(encoded, shape):
         shape = tf.convert_to_tensor(shape, tf.int64)
         size = tf.math.reduce_prod(size)
@@ -47,7 +48,7 @@ class RLE:
 
         return decoded_mask
 
-
+    @staticmethod
     def encode(decoded:np.ndarray)-> str:
         pixels = decoded.flatten()
         pixels = np.concatenate([[0], pixels, [0]])
