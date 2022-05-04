@@ -10,3 +10,6 @@ class Config:
     SF_CLASSES = ("lb", "sb", "st")
     SF2LF = {_sf:_lf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
     LF2SF = {_lf:_sf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
+    NFOLD = 8
+    IMAGE_SHAPE = (256, 256)
+    SEGMENT_SHAPE = (256, 256)

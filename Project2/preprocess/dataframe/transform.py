@@ -3,6 +3,7 @@ from config import Config
 import pandas as pd
 from glob import glob
 
+
 def load_and_preprocess_train_dataframe()->pd.DataFrame:
     train_df = pd.read_csv(Config.TRAIN_CSV)
     all_train_images = glob(os.path.join(Config.TRAIN_DIR, "**", "*.png"), recursive=True)
@@ -14,14 +15,12 @@ def preprocessing_dataframe(df : pd.DataFrame, globbed_full_filepaths : list, is
     df = __split_day_number_and_add_column(df)
     df = __split_slice_id_and_add_column(df)
     df = __merge_dataframe_with_filepath(df, globbed_full_filepaths)
-    df = __merge_dataframe_with_filepath(df, globbed_full_filepaths)
     df = __slice_file_height_and_weight(df)
     df = __slice_pixel_spacing(df)
 
     if not is_test:
         df = __merge_LF_rows_to_single_row_and_multiple_columns(df)
 
-    
     df = __reorder_columns_of_dataframe(df, __get_order_of_columns(is_test))
     return df
 
@@ -36,16 +35,17 @@ def __split_day_number_and_add_column(df:pd.DataFrame) -> pd.DataFrame:
     return df
 
 def __split_slice_id_and_add_column(df:pd.DataFrame) -> pd.DataFrame:
-    df["splice_id_str"] = df["id"].apply(lambda x: x.split("_", 2)[2])
+    df["slice_id"] = df["id"].apply(lambda x: x.split("_", 2)[2])
     return df
 
 def __merge_dataframe_with_filepath(df:pd.DataFrame, globbed_full_filepaths:list) ->pd.DataFrame:
     df["_partial_identifier"] = (globbed_full_filepaths[0].rsplit("/", 4)[0] + "/" +
                                     df["case_id_str"] + "/" + 
-                                    df["case_id_str"] + "-" + df["day_number_str"] + "/"
+                                    df["case_id_str"] + "_" + df["day_number_str"] + "/"
                                     "scans/" +
                                     df["slice_id"]
                                 )
+    
     _merging_df = pd.DataFrame({
         "_partial_identifier" : [x.rsplit("_", 4)[0] for x in globbed_full_filepaths],
         "full_filepath": globbed_full_filepaths
@@ -65,13 +65,13 @@ def __slice_pixel_spacing(df:pd.DataFrame)->pd.DataFrame:
 
 def __merge_LF_rows_to_single_row_and_multiple_columns(df:pd.DataFrame)->pd.DataFrame:
     large_bowel_df = df[df["class"] == "large_bowel"][['id', 'segmentation']].rename(columns={
-        "segmentation", "large_bowel_RLE_encoded"
+        "segmentation": "large_bowel_RLE_encoded"
     })
     small_bowel_df = df[df["class"] == "small_bowel"][["id", "segmentation"]].rename(columns= {
-        "segmentation", "small_bowel_RLE_encoded"
+        "segmentation": "small_bowel_RLE_encoded"
     })
     stomach_df = df[df["class"] == "stomach"][["id", "segmentation"]].rename(columns={
-        "segmentation", "stomach_RLE_encoded"
+        "segmentation": "stomach_RLE_encoded"
     })
     df = df.merge(large_bowel_df, on="id", how="left")
     df = df.merge(small_bowel_df, on="id", how="left")
