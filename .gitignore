@@ -2,7 +2,7 @@ __pycache__
 .ipynb_checkpoints
 .vscode
 .DS_Store
-Project2/dataset
+Project2/row-data
 .idea
 
 Project2/test.ipynb
