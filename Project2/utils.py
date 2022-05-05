@@ -21,6 +21,7 @@ class RLE:
         for low, high in zip(pixel_starts, pixel_ends):
             decoded[low:high] = color
         return decoded.reshape(shape)
+        
     @staticmethod
     def decode_tf(encoded, shape):
         shape = tf.convert_to_tensor(shape, tf.int64)
@@ -55,17 +56,6 @@ class RLE:
         runs = np.where(pixels[1:] != pixels[:-1])[0] + 1
         runs[1::2] -= runs[::2]
         return ' '.join(str(x) for x in runs)
-    
-def load_png_image_tf(image_path:str)->tf.Tensor:
-    tf_image = tf.io.read_file(image_path)
-    tf_png_image = tf.image.decode_png(tf_image, channels=3)
-    return tf_png_image
-
-def load_gray_16_image(image_path:str, normalize=True):
-    cv2_image = cv2.imread(image_path, cv2.IMREAD_ANYDEPTH)
-    if normalize:
-        cv2_image = cv2_image/65535.
-    return cv2_image
 
 
         

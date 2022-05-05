@@ -1,4 +1,3 @@
-from sqlite3 import DatabaseError
 from sklearn.model_selection import GroupKFold
 from config import Config
 import pandas as pd 

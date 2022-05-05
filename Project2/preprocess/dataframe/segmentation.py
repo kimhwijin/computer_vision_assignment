@@ -9,7 +9,7 @@ import os
 def make_RLE_to_mask_and_save_for_all(df:pd.DataFrame)->pd.DataFrame:
     df[f"{Config.MASK_STYLE.name}_mask_path"] = df.prograss_apply(lambda _row: make_RLE_to_mask_and_save_for_each_row(_row), axis=1)
     return df
-
+    
 def make_RLE_to_mask_and_save_for_each_row(row:pd.DataFrame)->str:
     mask = make_RLE_to_mask_for_each_row(row)
     mask_path = save_mask_if_not_exists(mask, row["id"])
