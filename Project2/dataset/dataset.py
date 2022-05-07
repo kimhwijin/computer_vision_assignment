@@ -8,11 +8,11 @@ import tensorflow as tf
 def make_train_validation_dataset()->tuple[tf.data.Dataset, tf.data.Dataset]:
     df = load_and_preprocess_train_dataframe()
     train_df, valid_df = create_kfold_train_validation_dataframe(df)
-    train_dataset, valid_dataset = make_train_valid_dataset(train_df, valid_df)
+    train_dataset, valid_dataset = pass_through_tf_pipeline_from_train_valid_dataframe_to_dataset(train_df, valid_df)
     return train_dataset, valid_dataset
 
 
-def make_train_valid_dataset(train_df:pd.DataFrame, valid_df:pd.DataFrame)->tuple[tf.data.Dataset, tf.data.Dataset]:
+def pass_through_tf_pipeline_from_train_valid_dataframe_to_dataset(train_df:pd.DataFrame, valid_df:pd.DataFrame)->tuple[tf.data.Dataset, tf.data.Dataset]:
     train_dataset = __make_dataset_from_filepath_segmentation_shape(train_df)
     valid_dataset = __make_dataset_from_filepath_segmentation_shape(valid_df)
 
@@ -24,6 +24,7 @@ def make_train_valid_dataset(train_df:pd.DataFrame, valid_df:pd.DataFrame)->tupl
 
     train_dataset = __transform_filepath_to_image_dataset(train_dataset)
     valid_dataset = __transform_filepath_to_image_dataset(valid_dataset)
+    
     # dataset = __argument_dataset(dataset)
     # dataset = __argument_dataset(dataset)
 

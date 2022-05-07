@@ -1,6 +1,3 @@
-from dataclasses import dataclass
-from enum import Enum, auto
-import enum
 import os
 from enums import MASK_STYLE
 import tensorflow as tf
