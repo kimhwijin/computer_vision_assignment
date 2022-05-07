@@ -1,5 +1,5 @@
 import os
-from enums import MASK_STYLE
+from enums import *
 import tensorflow as tf
 
 class Config:
@@ -27,5 +27,10 @@ class Config:
         TRAIN_SHUFFLE_BUFFER_SIZE:int = 30000 // BATCH_SIZE
         VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
 
-    
+    class Train:
+        kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.name
+        activation:str=ACTIVATION.RELU.name
+        
+
+
 

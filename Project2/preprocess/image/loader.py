@@ -1,6 +1,6 @@
 import tensorflow as tf
 import cv2
-from Project2.enums import MASK_STYLE
+from enums import MASK_STYLE
 from config import Config
 import numpy as np
 from utils import RLE
