@@ -29,14 +29,14 @@ def __split_kfold_train_validation_and_sampling_dataframe(df:pd.DataFrame)->tupl
         break
     
 
-    fold_train_df["large_bowel_RLE_encoded"].fillna("", inplcae=True)
-    fold_train_df["small_bowel_RLE_encoded"].fillna("", inplcae=True)
-    fold_train_df["stomach_RLE_encoded"].fillna("", inplcae=True)
+    fold_train_df["large_bowel_RLE_encoded"].fillna("", inplace=True)
+    fold_train_df["small_bowel_RLE_encoded"].fillna("", inplace=True)
+    fold_train_df["stomach_RLE_encoded"].fillna("", inplace=True)
 
 
-    fold_valid_df["large_bowel_RLE_encoded"].fillna("", inplcae=True)
-    fold_valid_df["small_bowel_RLE_encoded"].fillna("", inplcae=True)
-    fold_valid_df["stomach_RLE_encoded"].fillna("", inplcae=True)
+    fold_valid_df["large_bowel_RLE_encoded"].fillna("", inplace=True)
+    fold_valid_df["small_bowel_RLE_encoded"].fillna("", inplace=True)
+    fold_valid_df["stomach_RLE_encoded"].fillna("", inplace=True)
 
     return fold_train_df, fold_valid_df
 

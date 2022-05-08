@@ -28,8 +28,8 @@ def maxpool2d(x, pool_size, strides,**kwargs):
     return tf.keras.layers.MaxPool2D(pool_size=pool_size, strides=strides, **kwargs)(x)
 
 
-def upconv2d(x, **kwargs):
-    return tf.keras.layers.Conv2DTranspose(**kwargs)(x)
+def upconv2d(x, size=(2,2), **kwargs):
+    return tf.keras.layers.UpSampling2D(size=size, **kwargs)(x)
 
 def crop2d(x, cropping, **kwargs):
     return tf.keras.layers.Cropping2D(cropping, **kwargs)(x)

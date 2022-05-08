@@ -18,7 +18,8 @@ class Config:
     NFOLD:int = 8
     IMAGE_SHAPE:tuple[int,int] = (256, 256)
     SEGMENT_SHAPE:tuple[int,int] = (256, 256)
-    MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_ONE_LABEL
+    MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_MULTI_LABEL
+    N_LABELS = 3
     MASK_DIR:str = os.path.join(SAVE_DIR, MASK_STYLE.name, "mask")
     
     class Dataset:
@@ -28,9 +29,10 @@ class Config:
         VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
 
     class Train:
-        inputs = tf.keras.layers.Input((572, 572, 1))
+        inputs = tf.keras.layers.Input((256,256,3))
         kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.value
         activation:str=ACTIVATION.RELU.value
+
         
 
 
