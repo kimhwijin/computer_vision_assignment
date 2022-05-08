@@ -28,8 +28,9 @@ class Config:
         VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
 
     class Train:
-        kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.name
-        activation:str=ACTIVATION.RELU.name
+        inputs = tf.keras.layers.Input((572, 572, 1))
+        kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.value
+        activation:str=ACTIVATION.RELU.value
         
 
 
