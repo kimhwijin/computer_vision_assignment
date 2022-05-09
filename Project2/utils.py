@@ -25,7 +25,7 @@ class RLE:
     @staticmethod
     def decode_tf(encoded, shape):
         shape = tf.convert_to_tensor(shape, tf.int64)
-        size = tf.math.reduce_prod(size)
+        size = tf.math.reduce_prod(shape)
 
         encoded = tf.strings.split(encoded)
         encoded = tf.strings.to_number(encoded, tf.int64)
@@ -34,15 +34,15 @@ class RLE:
         pixel_lengths = encoded[1::2]
 
         total_ones = tf.reduce_sum(pixel_lengths)
-        ones = tf.ones([total_ones], tf.unit8)
+        ones = tf.ones([total_ones], tf.uint8)
 
         r = tf.range(total_ones)
         cumulative_length_sum = tf.math.cumsum(pixel_lengths)
         s = tf.searchsorted(cumulative_length_sum, r, 'right')
         
         padded_cumsum = tf.pad(cumulative_length_sum[:-1], [(1,0)])
-        idx = r + tf.gater(pixel_starts - padded_cumsum, s)
-
+        idx = r + tf.gather(pixel_starts - padded_cumsum, s)
+        
         decoded_flat_mask = tf.scatter_nd(tf.expand_dims(idx, 1), ones, [size])
 
         decoded_mask = tf.reshape(decoded_flat_mask, shape)

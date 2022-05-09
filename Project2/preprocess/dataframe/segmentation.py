@@ -1,5 +1,5 @@
 import pandas as pd
-from utils.utils import RLE
+from utils import RLE
 import numpy as np
 from config import Config
 from enums import MASK_STYLE
@@ -7,7 +7,7 @@ import cv2
 import os
 
 def make_RLE_to_mask_and_save_for_all(df:pd.DataFrame)->pd.DataFrame:
-    df[f"{Config.MASK_STYLE.name}_mask_path"] = df.prograss_apply(lambda _row: make_RLE_to_mask_and_save_for_each_row(_row), axis=1)
+    df[f"{Config.MASK_STYLE.name}_mask_path"] = df.apply(lambda _row: make_RLE_to_mask_and_save_for_each_row(_row), axis=1)
     return df
     
 def make_RLE_to_mask_and_save_for_each_row(row:pd.DataFrame)->str:
