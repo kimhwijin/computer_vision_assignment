@@ -24,6 +24,7 @@ class RLE:
         
     @staticmethod
     def decode_tf(encoded, shape):
+        
         shape = tf.convert_to_tensor(shape, tf.int64)
         size = tf.math.reduce_prod(shape)
 
@@ -34,7 +35,7 @@ class RLE:
         pixel_lengths = encoded[1::2]
 
         total_ones = tf.reduce_sum(pixel_lengths)
-        ones = tf.ones([total_ones], tf.uint8)
+        ones = tf.ones([total_ones])
 
         r = tf.range(total_ones)
         cumulative_length_sum = tf.math.cumsum(pixel_lengths)

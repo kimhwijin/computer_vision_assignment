@@ -34,13 +34,12 @@ def normalize_batch(batch:tf.Tensor, axis=0)->tf.Tensor:
     return normalized_batch
     
 def __decode_RLE_to_mask(RLE_string, mask_shape)->tf.Tensor:
-    if tf.strings.length(RLE_string) == tf.constant(0):
-        mask = tf.zeros(mask_shape, dtype=tf.uint8)
+    if tf.greater(tf.strings.length(RLE_string), 0):
+        mask = tf.zeros(mask_shape)
     else:
         mask =  RLE.decode_tf(RLE_string, mask_shape)
     mask = tf.expand_dims(mask, axis=-1)
     mask = tf.image.resize(mask, size=Config.SEGMENT_SHAPE, method=tf.image.ResizeMethod.NEAREST_NEIGHBOR)
-    mask = tf.cast(mask, tf.uint8)
     return mask
 
 def __concat_masks_tf(masks_tf:tf.Tensor, axis=-1)->tf.Tensor:
