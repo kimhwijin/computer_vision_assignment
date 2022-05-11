@@ -1,4 +1,5 @@
 import os
+from typing import Tuple
 from enums import *
 import tensorflow as tf
 
@@ -11,13 +12,13 @@ class Config:
     SAVE_DIR:str = os.path.join(DATA_DIR, "save")
 
     SAMPLE_SUBMIT_CSV:str = os.path.join(DATA_DIR, "sample_submission.csv")
-    CLASSES:tuple[str,str,str] = ("Large Bowel", "Small Bowel", "Stomach")
-    SF_CLASSES:tuple[str,str,str] = ("lb", "sb", "st")
-    SF2LF:dict[str:str] = {_sf:_lf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
-    LF2SF:dict[str:str] = {_lf:_sf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
+    CLASSES:Tuple[str,str,str] = ("Large Bowel", "Small Bowel", "Stomach")
+    SF_CLASSES:Tuple[str,str,str] = ("lb", "sb", "st")
+    SF2LF = {_sf:_lf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
+    LF2SF = {_lf:_sf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
     NFOLD:int = 8
-    IMAGE_SHAPE:tuple[int,int] = (256, 256)
-    SEGMENT_SHAPE:tuple[int,int] = (256, 256)
+    IMAGE_SHAPE:Tuple[int,int] = (256, 256)
+    SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
     MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     N_LABELS = 3
     MASK_DIR:str = os.path.join(SAVE_DIR, MASK_STYLE.name, "mask")

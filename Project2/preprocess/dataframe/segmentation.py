@@ -1,3 +1,4 @@
+from typing import Tuple
 import pandas as pd
 from utils import RLE
 import numpy as np
@@ -28,7 +29,7 @@ def save_mask_if_not_exists(mask:np.ndarray, id:str)->str:
         np.save(mask_path, mask)
     return mask_path + '.npy'
 
-def __get_each_class_mask(row:pd.DataFrame)-> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def __get_each_class_mask(row:pd.DataFrame)-> Tuple[np.ndarray, np.ndarray, np.ndarray]:
 
     slice_shape = (row["slice_height"], row["slice_width"])
 
@@ -69,7 +70,7 @@ def __transform_masks_multi_label(class_masks)->np.ndarray:
     return mask
 
 
-def __resize(mask:np.ndarray, shape:tuple[int, int])->np.ndarray:
+def __resize(mask:np.ndarray, shape:Tuple[int, int])->np.ndarray:
     mask = cv2.resize(mask, shape, interpolation=cv2.INTER_NEAREST).astype(np.uint8)
     return mask
 

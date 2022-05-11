@@ -1,3 +1,4 @@
+from typing import Tuple
 from utils import RLE
 from config import Config
 from preprocess.dataframe.transform import load_and_preprocess_train_dataframe
@@ -6,7 +7,7 @@ from preprocess.image.loader import load_png_image_and_resize_tf, normalize_batc
 import pandas as pd
 import tensorflow as tf
 
-def make_train_validation_dataset()->tuple[tf.data.Dataset, tf.data.Dataset]:
+def make_train_validation_dataset()->Tuple[tf.data.Dataset, tf.data.Dataset]:
     df = load_and_preprocess_train_dataframe()
     train_df, valid_df = create_kfold_train_validation_dataframe(df)
     # train_dataset = dataset_test(train_df)
