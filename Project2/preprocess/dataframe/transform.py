@@ -2,6 +2,9 @@ import os
 from config import Config
 import pandas as pd
 from glob import glob
+from preprocess.image.loader import RLE 
+import cv2
+import numpy as np
 
 
 def load_and_preprocess_train_dataframe()->pd.DataFrame:
@@ -20,7 +23,7 @@ def preprocessing_dataframe(df : pd.DataFrame, globbed_full_filepaths : list, is
 
     if not is_test:
         df = __merge_LF_rows_to_single_row_and_multiple_columns(df)
-
+        
     df = __reorder_columns_of_dataframe(df, __get_order_of_columns(is_test))
     return df
 
@@ -82,6 +85,7 @@ def __merge_LF_rows_to_single_row_and_multiple_columns(df:pd.DataFrame)->pd.Data
     df["small_bowel_flag"] = df["small_bowel_RLE_encoded"].apply(lambda x : not pd.isna(x))
     df["stomach_flag"] = df["stomach_RLE_encoded"].apply(lambda x : not pd.isna(x))
     df["n_segs"] = df["large_bowel_flag"].astype(int) + df["small_bowel_flag"].astype(int) + df["stomach_flag"].astype(int)
+    
     return df
 
 def __reorder_columns_of_dataframe(df:pd.DataFrame, order_of_column:list)->pd.DataFrame:
