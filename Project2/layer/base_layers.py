@@ -1,6 +1,7 @@
-from codecs import strict_errors
+from argparse import Action
 import tensorflow as tf
 from config import Config
+from enums import ACTIVATION
 
 def conv2d_bn_activation(
         x,
@@ -34,6 +35,5 @@ def upconv2d(x, size=(2,2), **kwargs):
 def crop2d(x, cropping, **kwargs):
     return tf.keras.layers.Cropping2D(cropping, **kwargs)(x)
 
-
-
-
+def activation(x, name:ACTIVATION):
+        return tf.keras.layers.Activation(name.value)(x)

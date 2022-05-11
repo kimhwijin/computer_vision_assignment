@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow import keras
 from layer.base_layers import *
 
-def get_unet_model():
+def get_unet_model(from_logits=False):
 
     x = Config.Train.inputs
     
@@ -62,7 +62,11 @@ def get_unet_model():
     x = conv2d_bn_activation(x, 64, 3, padding='same')
     x = conv2d_bn_activation(x, Config.N_LABELS, 3, padding='same')
 
+    if not from_logits:
+        x = activation(x, ACTIVATION.SIGMOID)
+        
     outputs = x 
+
     model = keras.Model(inputs=Config.Train.inputs, outputs=outputs)
     
     return model

@@ -14,3 +14,5 @@ class KERNEL_INITIALIZER(Enum):
 @unique
 class ACTIVATION(Enum):
     RELU = 'relu'
+    SIGMOID = 'sigmoid'
+
