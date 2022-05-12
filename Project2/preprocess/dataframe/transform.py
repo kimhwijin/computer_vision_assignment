@@ -7,23 +7,24 @@ import cv2
 import numpy as np
 
 def load_row_train_csv_to_dataframe_and_transform_to_usable_dataframe_and_save():
-    df = pd.read_csv(Config.TRAIN_CSV)
-    all_train_images = glob(os.path.join(Config.TRAIN_DIR, "**", "*.png"), recursive=True)
+    if not Config.Train.ALREADY_SAVED_SEGMENT:
+        df = pd.read_csv(Config.TRAIN_CSV)
+        all_train_images = glob(os.path.join(Config.TRAIN_DIR, "**", "*.png"), recursive=True)
 
-    df = __split_case_id_and_add_column(df)
-    df = __split_day_number_and_add_column(df)
-    df = __split_slice_id_and_add_column(df)
-    df = __merge_dataframe_with_filepath(df, all_train_images)
-    df = __slice_file_height_and_weight(df)
-    df = __slice_pixel_spacing(df)
-    df = __merge_LF_rows_to_single_row_and_multiple_columns(df)
-    df = __add_each_weighted_map(df)
-    df.to_csv(Config.TRAINABLE_CSV)
+        df = __split_case_id_and_add_column(df)
+        df = __split_day_number_and_add_column(df)
+        df = __split_slice_id_and_add_column(df)
+        df = __merge_dataframe_with_filepath(df, all_train_images)
+        df = __slice_file_height_and_weight(df)
+        df = __slice_pixel_spacing(df)
+        df = __merge_LF_rows_to_single_row_and_multiple_columns(df)
+        df = __add_each_weighted_map(df)
+        df.to_csv(Config.TRAINABLE_CSV)
     
     return Config.TRAINABLE_CSV
 
 def save_png_images_from_transformed_from_each_RLE_mask_and_weight_map(df):
-    if len(list(glob(Config.MASK_DIR))) > 100 and len(list(glob(Config.WEIGHT_MAP_DIR))) > 100:
+    if Config.Train.ALREADY_SAVED_SEGMENT:
         return
 
     large_bowel_RLE = list(df['large_bowel_RLE_encoded'].fillna(""))

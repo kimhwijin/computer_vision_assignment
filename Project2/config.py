@@ -27,7 +27,7 @@ class Config:
     
     class Dataset:
         AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE
-        BATCH_SIZE:int = 24
+        BATCH_SIZE:int = 64
         TRAIN_SHUFFLE_BUFFER_SIZE:int = 30000 // BATCH_SIZE
         VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
 
@@ -35,6 +35,7 @@ class Config:
         inputs = tf.keras.layers.Input((256,256,3))
         kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.value
         activation:str=ACTIVATION.RELU.value
+        ALREADY_SAVED_SEGMENT:bool = True
 
         
 
