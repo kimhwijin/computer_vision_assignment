@@ -76,8 +76,8 @@ def __rescale_from_0_upto_1(x, y):
     mask, weight_map = y
     data = data / (K.max(data, axis=0) + K.epsilon())
     mask = mask / (K.max(mask, axis=0) + K.epsilon())
-    weight_map = weight_map / (K.max(weight_map, axis=0) + K.epsilon)
-    weight_map *= 2
+    weight_map = weight_map / (K.max(weight_map, axis=0) + K.epsilon())
+    weight_map *= 2.
     return data, (mask, weight_map)
     
 def __normalize(weight_map):
