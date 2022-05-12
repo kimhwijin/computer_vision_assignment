@@ -35,5 +35,5 @@ def upconv2d(x, size=(2,2), **kwargs):
 def crop2d(x, cropping, **kwargs):
     return tf.keras.layers.Cropping2D(cropping, **kwargs)(x)
 
-def activation(x, name:ACTIVATION):
-        return tf.keras.layers.Activation(name.value)(x)
+def activation(x, name:str):
+    return tf.keras.layers.Activation(name)(x)
