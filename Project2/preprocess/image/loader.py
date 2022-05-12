@@ -14,6 +14,26 @@ def load_png_image_and_resize_tf(image_path:str)->tf.Tensor:
 
     return resized_png_image
 
+def load_mask_and_resize_tf(id_x:str)->tf.Tensor:
+    # id_x = tf.strings.join(id_x, '.png')
+    filepath = tf.strings.join([Config.MASK_DIR, id_x], separator='/')
+    image_bytes = tf.io.read_file(filepath)
+    png_image = tf.image.decode_png(image_bytes, channels=3)
+
+    resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
+    resized_png_image = tf.image.resize(png_image, resized_shape)
+    return resized_png_image
+
+def load_weight_map_and_resize_tf(id_x:str)->tf.Tensor:
+    # id_x = tf.strings.join(id_x, '.png')
+    filepath = tf.strings.join([Config.WEIGHT_MAP_DIR, id_x], separator='/')
+    image_bytes = tf.io.read_file(filepath)
+    png_image = tf.image.decode_png(image_bytes, channels=3)
+
+    resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
+    resized_png_image = tf.image.resize(png_image, resized_shape)
+    return resized_png_image
+
 def load_mask(s1,s2,s3, mask_shape):
     t1 = __decode_RLE_to_mask(s1, mask_shape)
     t2 = __decode_RLE_to_mask(s2, mask_shape)

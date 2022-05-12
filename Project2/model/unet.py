@@ -63,7 +63,7 @@ def get_unet_model(from_logits=False):
     x = conv2d_bn_activation(x, Config.N_LABELS, 3, padding='same')
 
     if not from_logits:
-        x = activation(x, ACTIVATION.SIGMOID)
+        x = activation(x, ACTIVATION.SIGMOID.value)
         
     outputs = x 
 
