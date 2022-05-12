@@ -14,7 +14,7 @@ def calculate_bce_loss(y_true, y_pred, reduction=True):
 
 def calculate_bce_weighted_loss(y_true, y_pred, y_weight_map):
     loss = calculate_bce_loss(y_true, y_pred, reduction=False)
-    return K.mean(loss * y_weight_map)
+    return K.sum(K.mean(loss * y_weight_map, axis=0))
 
 
 def bce(from_logits=False, label_smoothing=0.0, axis=-1, reduction=keras.losses.Reduction.AUTO):
