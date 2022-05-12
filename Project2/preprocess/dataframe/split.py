@@ -17,7 +17,7 @@ def __encode_segment_flag_columns_to_single_string_column(df:pd.DataFrame)->pd.D
 def __split_kfold_train_validation_and_sampling_dataframe(df:pd.DataFrame)->Tuple[pd.DataFrame, pd.DataFrame]:
     group_kfold = GroupKFold(n_splits=Config.NFOLD)
 
-    for train_idxs, valid_idxs in group_kfold.split(df["id_x"], df["which_segments"], df["case_id"]):
+    for train_idxs, valid_idxs in group_kfold.split(df["id"], df["which_segments"], df["case_id"]):
         
         fold_train_df = df.iloc[train_idxs]
         N_TRAIN = len(fold_train_df)
@@ -26,16 +26,7 @@ def __split_kfold_train_validation_and_sampling_dataframe(df:pd.DataFrame)->Tupl
         fold_valid_df = df.iloc[valid_idxs]
         N_VALID = len(fold_valid_df)
         fold_valid_df = fold_valid_df.sample(N_VALID).reset_index(drop=True)
-
         break
-
-    fold_train_df.large_bowel_RLE_encoded = fold_train_df.large_bowel_RLE_encoded.fillna("")
-    fold_train_df.small_bowel_RLE_encoded = fold_train_df.small_bowel_RLE_encoded.fillna("")
-    fold_train_df.stomach_RLE_encoded = fold_train_df.stomach_RLE_encoded.fillna("")
-
-    fold_valid_df.large_bowel_RLE_encoded = fold_valid_df.large_bowel_RLE_encoded.fillna("")
-    fold_valid_df.small_bowel_RLE_encoded = fold_valid_df.small_bowel_RLE_encoded.fillna("")
-    fold_valid_df.stomach_RLE_encoded = fold_valid_df.stomach_RLE_encoded.fillna("")
-
+    
     return fold_train_df, fold_valid_df
 

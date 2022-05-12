@@ -4,7 +4,7 @@ from enums import *
 import tensorflow as tf
 
 class Config:
-
+    
     DATA_DIR:str = os.path.join(os.getcwd(), "row-data")
     TRAIN_DIR:str = os.path.join(DATA_DIR, "train")
     TRAIN_CSV:str = os.path.join(DATA_DIR, "train.csv")
@@ -24,7 +24,10 @@ class Config:
     SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
     MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     N_LABELS = 3
+    ALREADY_SAVED_MASK:bool = True
+    ALREADY_SAVED_WEIGHT_MAP:bool = True
     
+
     class Dataset:
         AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE
         BATCH_SIZE:int = 64
@@ -35,7 +38,6 @@ class Config:
         inputs = tf.keras.layers.Input((256,256,3))
         kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.value
         activation:str=ACTIVATION.RELU.value
-        ALREADY_SAVED_SEGMENT:bool = True
 
         
 
