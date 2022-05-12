@@ -3,7 +3,7 @@ from utils import RLE
 from config import Config
 from preprocess.dataframe.transform import load_and_preprocess_train_dataframe
 from preprocess.dataframe.split import create_kfold_train_validation_dataframe
-from preprocess.image.loader import load_png_image_and_resize_tf, normalize_batch, load_mask, load_mask_and_resize_tf, load_weight_map_and_resize_tf
+from preprocess.image.loader import load_16bit_grayscale_png_image_and_resize_tf, normalize_batch, load_mask, load_mask_and_resize_tf, load_weight_map_and_resize_tf
 
 import pandas as pd
 import tensorflow as tf
@@ -74,7 +74,7 @@ def __batch_dataset(dataset:tf.data.Dataset)->tf.data.Dataset:
     return dataset
 
 def __load_resized_png_image(full_filepath, id_x):
-    return load_png_image_and_resize_tf(full_filepath), id_x
+    return load_16bit_grayscale_png_image_and_resize_tf(full_filepath), id_x
 
 def __load_resized_mask_weight_map_image(image, id_x):
     return image, (load_mask_and_resize_tf(id_x) , load_weight_map_and_resize_tf(id_x))

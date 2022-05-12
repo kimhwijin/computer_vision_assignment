@@ -5,9 +5,10 @@ from config import Config
 import numpy as np
 from utils import RLE
 
-def load_png_image_and_resize_tf(image_path:str)->tf.Tensor:
+def load_16bit_grayscale_png_image_and_resize_tf(image_path:str)->tf.Tensor:
     image_bytes = tf.io.read_file(image_path)
-    png_image = tf.image.decode_png(image_bytes, channels=3)
+    png_image = tf.image.decode_png(image_bytes, channels=1, dtype=tf.uint16)
+    png_image = tf.cast(png_image, dtype=tf.float32)
 
     resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
     resized_png_image = tf.image.resize(png_image, resized_shape)
@@ -19,6 +20,7 @@ def load_mask_and_resize_tf(id_x:str)->tf.Tensor:
     filepath = tf.strings.join([Config.MASK_DIR, id_x], separator='/')
     image_bytes = tf.io.read_file(filepath)
     png_image = tf.image.decode_png(image_bytes, channels=3)
+    png_image = tf.cast(png_image, dtype=tf.float32)
 
     resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
     resized_png_image = tf.image.resize(png_image, resized_shape)
@@ -29,7 +31,8 @@ def load_weight_map_and_resize_tf(id_x:str)->tf.Tensor:
     filepath = tf.strings.join([Config.WEIGHT_MAP_DIR, id_x], separator='/')
     image_bytes = tf.io.read_file(filepath)
     png_image = tf.image.decode_png(image_bytes, channels=3)
-
+    png_image = tf.cast(png_image, dtype=tf.float32)
+    
     resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
     resized_png_image = tf.image.resize(png_image, resized_shape)
     return resized_png_image
