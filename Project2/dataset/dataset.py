@@ -76,9 +76,13 @@ def __rescale_from_0_upto_1(x, y):
     mask, weight_map = y
     data = data / (K.max(data) + K.epsilon())
     mask = mask / (K.max(mask) + K.epsilon())
-    weight_map = weight_map / (K.max(weight_map) + K.epsilon())
+    weight_map = __normalize(weight_map)
     return data, (mask, weight_map)
     
+def __normalize(weight_map):
+    weight_map = weight_map - (K.mean(weight_map, axis=0)) 
+    weight_map = weight_map / (K.var(weight_map, axis=0) + K.epsilon())
+    return weight_map
 
 def __batch_dataset(dataset:tf.data.Dataset)->tf.data.Dataset:
     dataset = dataset.batch(Config.Dataset.BATCH_SIZE, drop_remainder=True)
