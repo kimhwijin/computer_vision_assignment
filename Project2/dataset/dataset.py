@@ -74,9 +74,10 @@ def __load_resized_mask_weight_map_image(image, file_id):
 def __rescale_from_0_upto_1(x, y):
     data = x
     mask, weight_map = y
-    data = data / (K.max(data) + K.epsilon())
-    mask = mask / (K.max(mask) + K.epsilon())
-    weight_map = __normalize(weight_map)
+    data = data / (K.max(data, axis=0) + K.epsilon())
+    mask = mask / (K.max(mask, axis=0) + K.epsilon())
+    weight_map = weight_map / (K.max(weight_map, axis=0) + K.epsilon)
+    weight_map *= 2
     return data, (mask, weight_map)
     
 def __normalize(weight_map):
