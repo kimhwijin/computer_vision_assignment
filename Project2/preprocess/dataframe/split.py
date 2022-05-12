@@ -21,10 +21,12 @@ def __split_kfold_train_validation_and_sampling_dataframe(df:pd.DataFrame)->Tupl
         
         fold_train_df = df.iloc[train_idxs]
         N_TRAIN = len(fold_train_df)
+        print("n train : ", N_TRAIN)
         fold_train_df = fold_train_df.sample(N_TRAIN).reset_index(drop=True)
 
         fold_valid_df = df.iloc[valid_idxs]
         N_VALID = len(fold_valid_df)
+        print("n valid : ", N_VALID)
         fold_valid_df = fold_valid_df.sample(N_VALID).reset_index(drop=True)
         break
     
