@@ -34,7 +34,7 @@ def normalize_batch(batch:tf.Tensor, axis=0)->tf.Tensor:
     return normalized_batch
     
 def __decode_RLE_to_mask(RLE_string, mask_shape)->tf.Tensor:
-    if tf.greater(tf.strings.length(RLE_string), 0):
+    if not tf.greater(tf.strings.length(RLE_string), 3):
         mask = tf.zeros(mask_shape)
     else:
         mask =  RLE.decode_tf(RLE_string, mask_shape)

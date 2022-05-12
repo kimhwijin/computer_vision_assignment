@@ -9,8 +9,11 @@ class Config:
     TRAIN_DIR:str = os.path.join(DATA_DIR, "train")
     TRAIN_CSV:str = os.path.join(DATA_DIR, "train.csv")
     TEST_DIR:str = os.path.join(DATA_DIR, "test")
-    SAVE_DIR:str = os.path.join(DATA_DIR, "save")
+    SEGMENT_DIR:str = os.path.join(DATA_DIR, "segmentation")
+    MASK_DIR:str = os.path.join(SEGMENT_DIR, "mask")
+    WEIGHT_MAP_DIR:str = os.path.join(SEGMENT_DIR, "weight_map")
 
+    TRAINABLE_CSV:str = os.path.join(DATA_DIR, "trainable.csv")
     SAMPLE_SUBMIT_CSV:str = os.path.join(DATA_DIR, "sample_submission.csv")
     CLASSES:Tuple[str,str,str] = ("Large Bowel", "Small Bowel", "Stomach")
     SF_CLASSES:Tuple[str,str,str] = ("lb", "sb", "st")
@@ -21,7 +24,6 @@ class Config:
     SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
     MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     N_LABELS = 3
-    MASK_DIR:str = os.path.join(SAVE_DIR, MASK_STYLE.name, "mask")
     
     class Dataset:
         AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE

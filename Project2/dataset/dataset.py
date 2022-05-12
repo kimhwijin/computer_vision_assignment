@@ -10,8 +10,7 @@ import cv2
 import numpy as np
 
 def make_train_validation_dataset()->Tuple[tf.data.Dataset, tf.data.Dataset]:
-    df = load_and_preprocess_train_dataframe()
-    df = __add_each_weighted_map(df)
+    df = pd.read_csv(Config.TRAINABLE_CSV)
     train_df, valid_df = create_kfold_train_validation_dataframe(df)
     # train_dataset = dataset_test(train_df)
     train_dataset, valid_dataset = pass_through_tf_pipeline_from_train_valid_dataframe_to_dataset(train_df, valid_df)
@@ -49,6 +48,9 @@ def __make_dataset_from_filepath_segmentation_shape(df:pd.DataFrame)->tf.data.Da
         df["large_bowel_RLE_encoded"], 
         df["small_bowel_RLE_encoded"], 
         df["stomach_RLE_encoded"],
+        df["large_bowel_weighted_map"],
+        df["small_bowel_weighted_map"],
+        df["stomach_weighted_map"],
         df["slice_width"],
         df["slice_height"]
     )
@@ -66,29 +68,29 @@ def __transform_filepath_to_image_dataset(dataset:tf.data.Dataset)->tf.data.Data
     dataset = dataset.map(
     __load_resized_png_image_and_mask,
     num_parallel_calls=Config.Dataset.AUTOTUNE
+    )   
+    dataset = dataset.map(
+    __load_resized_png_image_and_mask1,
+    num_parallel_calls=Config.Dataset.AUTOTUNE
     )
     return dataset
 
-def __add_each_weighted_map(df):
-    def make_weighted_map(x):
-        e, x, y = list(x)
-        if type(e) is not float:
-            a = RLE.decode(e, (x,y))
-            b = cv2.erode(a, np.ones((3,3)))
-            return RLE.encode(a - b)
-        return ''
-    dff = pd.DataFrame(columns=["id", "large_bowel_weighted_map","small_bowel_weighted_map", "stomach_weighted_map"])
-    dff["large_bowel_weighted_map"] = df[['large_bowel_RLE_encoded', 'slice_height', 'slice_width']].apply(make_weighted_map,axis=1)
-    dff["small_bowel_weighted_map"] = df[['small_bowel_RLE_encoded', 'slice_height', 'slice_width']].apply(make_weighted_map,axis=1)
-    dff["stomach_weighted_map"] = df[['stomach_RLE_encoded', 'slice_height', 'slice_width']].apply(make_weighted_map,axis=1)
-    df = df.merge(dff, how='left')
-    return df
+def __load_resized_png_image_and_mask1(image, 
+                                    mask,
+                                    weighted):
 
-def __load_resized_png_image_and_mask(full_filepath, lb_RLE_string, sb_RLE_string, st_RLE_string, mask_height, mask_width):
+    # lb_weighted_map_string, sb_weighted_map_string, st_weighted_map_string,mask_height, mask_width = weighted
+    # weighted_map = load_mask(lb_weighted_map_string, sb_weighted_map_string, st_weighted_map_string, (mask_height, mask_width))
+    return image, (mask, weighted)
+
+
+def __load_resized_png_image_and_mask(full_filepath, 
+                                    lb_RLE_string, sb_RLE_string, st_RLE_string, 
+                                    lb_weighted_map_string, sb_weighted_map_string, st_weighted_map_string,
+                                    mask_height, mask_width):
     tf_image = load_png_image_and_resize_tf(full_filepath)
     mask = load_mask(lb_RLE_string, sb_RLE_string, st_RLE_string, (mask_height, mask_width))
-    return tf_image, mask
-
+    return tf_image, mask, (lb_weighted_map_string, sb_weighted_map_string, st_weighted_map_string, mask_height, mask_width)
 
 def __shuffle_dataset(dataset:tf.data.Dataset, buffer_size:int)->tf.data.Dataset:
     dataset = dataset.shuffle(buffer_size)
