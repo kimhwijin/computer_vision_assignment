@@ -18,7 +18,7 @@ def make_train_validation_dataset()->Tuple[tf.data.Dataset, tf.data.Dataset]:
     train_dataset, valid_dataset = pass_through_tf_pipeline_from_train_valid_dataframe_to_dataset(train_df, valid_df)
     return train_dataset, valid_dataset
 
-def pass_through_tf_pipeline_from_train_valid_dataframe_to_dataset(train_df:pd.DataFrame, valid_df:pd.DataFrame)->tuple[tf.data.Dataset, tf.data.Dataset]:
+def pass_through_tf_pipeline_from_train_valid_dataframe_to_dataset(train_df:pd.DataFrame, valid_df:pd.DataFrame)->Tuple[tf.data.Dataset, tf.data.Dataset]:
     
     train_dataset = __make_dataset_from_filepath(train_df)
     valid_dataset = __make_dataset_from_filepath(valid_df)

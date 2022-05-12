@@ -24,8 +24,8 @@ class Config:
     SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
     MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     N_LABELS = 3
-    ALREADY_SAVED_MASK:bool = True
-    ALREADY_SAVED_WEIGHT_MAP:bool = True
+    ALREADY_SAVED_MASK:bool = False
+    ALREADY_SAVED_WEIGHT_MAP:bool = False
     
 
     class Dataset:

@@ -42,7 +42,7 @@ def make_RLE_encoded_masks_to_single_png_mask_and_save(df):
     seg_width = list(df['slice_width'])
     seg_shape = list(zip(seg_width, seg_height))
 
-    file_id = list(df['id_x'])
+    file_id = list(df['id'])
 
     unsaved = __make_RLE_encodes_to_png_image_and_save(RLE_masks, seg_shape, file_id)
     print("unsaved mask : ", unsaved)
