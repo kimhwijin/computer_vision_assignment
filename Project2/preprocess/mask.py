@@ -5,20 +5,25 @@ def make_weight_map(masks:np.ndarray, w0=10, sigma=5):
     """
     masks : height, width, n classes
     """
+    #masks type -> binary uint8
+    masks = ( masks > 0 ).astype(np.uint8)
+    # 비어있는 마스크를 제거함
+    masks = masks[:,:,np.argwhere(masks.sum(axis=(0, 1)) > 0).reshape(-1)]
+
     # masks = height, width, channel
     masks = masks.transpose([2,0,1])
     # masks = channel, height, width
+    
     h, w = masks.shape[1:]
     n_classes = masks.shape[0]
-    #masks type -> binary uint8
-    masks = ( masks > 0 ).astype(np.uint8)
+    if n_classes == 0:
+        return np.zeros((h, w))
     distance_map = np.zeros((h*w, n_classes))
+
     X1, Y1 = np.meshgrid(np.arange(h), np.arange(w))
     X1, Y1 = np.c_[X1.ravel(), Y1.ravel()].T
 
     for i, mask in enumerate(masks):
-        if np.sum(mask) < 1:
-            continue
         #오브젝트의 바운더리를 구함
         bounds = find_boundaries(mask, mode='inner')
         #바운더리 픽셀만 남겨둠
@@ -27,6 +32,7 @@ def make_weight_map(masks:np.ndarray, w0=10, sigma=5):
         x_sum = (X2.reshape(-1, 1) - X1.reshape(1, -1)) ** 2
         y_sum = (Y2.reshape(-1, 1) - Y1.reshape(1, -1)) ** 2
         #각 픽셀 위치에서 가장 가까운 바운더리 픽셀을 정함.
+        
         distance_map[:, i] = np.sqrt(x_sum + y_sum).min(axis=0)
         
 
