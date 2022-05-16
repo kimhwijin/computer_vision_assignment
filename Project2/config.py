@@ -1,12 +1,12 @@
 import os
 from typing import Tuple
-from enums import *
+import enums
 import tensorflow as tf
 
 class Config:
     
-    # DATA_DIR:str = os.path.join(os.getcwd(), "row-data")
-    DATA_DIR:str = os.path.join('/content', 'computer_vision_assignment', 'Project2', "row-data")
+    DATA_DIR:str = os.path.join(os.getcwd(), "row-data")
+    # DATA_DIR:str = os.path.join('/content', 'computer_vision_assignment', 'Project2', "row-data")
     TRAIN_DIR:str = os.path.join(DATA_DIR, "train")
     TRAIN_CSV:str = os.path.join(DATA_DIR, "train.csv")
     TEST_DIR:str = os.path.join(DATA_DIR, "test")
@@ -23,23 +23,21 @@ class Config:
     NFOLD:int = 8
     IMAGE_SHAPE:Tuple[int,int] = (256, 256)
     SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
-    MASK_STYLE:MASK_STYLE = MASK_STYLE.MULTI_CLASS_MULTI_LABEL
+    MASK_STYLE:enums.MASK_STYLE = enums.MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     N_LABELS = 3
     ALREADY_SAVED_MASK:bool = True
     ALREADY_SAVED_WEIGHT_MAP:bool = True
     
 
-    class Dataset:
-        AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE
-        BATCH_SIZE:int = 16
-        TRAIN_SHUFFLE_BUFFER_SIZE:int = 30000 // BATCH_SIZE
-        VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
-        SEED = 1004
-
-    class Train:
-        inputs = tf.keras.layers.Input((256,256,1))
-        kernel_initializer:str=KERNEL_INITIALIZER.HE_NORMAL.value
-        activation:str=ACTIVATION.RELU.value
+    SEED = 1004
+    AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE
+    BATCH_SIZE:int = 32
+    TRAIN_SHUFFLE_BUFFER_SIZE:int = 30000 // BATCH_SIZE
+    VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
+        
+    MODEL_INPUT = tf.keras.layers.Input((256,256,1))
+    KERNEL_INITIALIZER:str= enums.KERNEL_INITIALIZER.HE_NORMAL.value
+    activation:str=enums.ACTIVATION.RELU.value
 
         
 
