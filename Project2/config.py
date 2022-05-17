@@ -9,12 +9,19 @@ class Config:
     # DATA_DIR:str = os.path.join('/content', 'computer_vision_assignment', 'Project2', "row-data")
     TRAIN_DIR:str = os.path.join(DATA_DIR, "train")
     TRAIN_CSV:str = os.path.join(DATA_DIR, "train.csv")
+    
     TEST_DIR:str = os.path.join(DATA_DIR, "test")
-    SEGMENT_DIR:str = os.path.join(DATA_DIR, "segmentation")
-    MASK_DIR:str = os.path.join(SEGMENT_DIR, "mask")
-    WEIGHT_MAP_DIR:str = os.path.join(SEGMENT_DIR, "weight_map")
+    if not os.path.exists(TEST_DIR): os.mkdir(TEST_DIR)
 
-    TRAINABLE_CSV:str = os.path.join(DATA_DIR, "trainable.csv")
+    SEGMENT_DIR:str = os.path.join(DATA_DIR, "segmentation")
+    if not os.path.exists(SEGMENT_DIR): os.mkdir(SEGMENT_DIR)
+
+    MASK_DIR:str = os.path.join(SEGMENT_DIR, "mask")
+    if not os.path.exists(MASK_DIR): os.mkdir(MASK_DIR)
+
+    WEIGHT_MAP_DIR:str = os.path.join(SEGMENT_DIR, "weight_map")
+    if not os.path.exists(WEIGHT_MAP_DIR): os.mkdir(WEIGHT_MAP_DIR)
+
     SAMPLE_SUBMIT_CSV:str = os.path.join(DATA_DIR, "sample_submission.csv")
     CLASSES:Tuple[str,str,str] = ("Large Bowel", "Small Bowel", "Stomach")
     SF_CLASSES:Tuple[str,str,str] = ("lb", "sb", "st")

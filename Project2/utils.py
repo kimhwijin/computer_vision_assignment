@@ -4,19 +4,15 @@ import cv2
 
 class RLE:
     @staticmethod
-    def decode(encoded: str, shape: list, color=1)->np.ndarray:
+    def decode(encoded: str, shape: list, dtype, color=1)->np.ndarray:
 
         np_encoded = np.array(encoded.split(), dtype=int)
         pixel_starts = np_encoded[0::2] - 1
         pixel_lengths = np_encoded[1::2]
         pixel_ends = pixel_starts + pixel_lengths
-
-        if len(shape) == 3:
-            h, w, d = shape
-            decoded = np.zeros((h*w, d), dtype=np.float32)
-        else:
-            h, w = shape
-            decoded = np.zeros((h*w), dtype=np.float32)
+        
+        h, w = shape
+        decoded = np.zeros((h*w), dtype=dtype)
     
         for low, high in zip(pixel_starts, pixel_ends):
             decoded[low:high] = color
