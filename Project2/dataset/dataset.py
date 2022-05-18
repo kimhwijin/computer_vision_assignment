@@ -6,6 +6,68 @@ from preprocess.image import loader
 import pandas as pd
 import tensorflow as tf
 import tensorflow.keras.backend as K
+import numpy as np
+import cv2
+from glob import glob
+import os
+
+def make_dataset():
+    paths = get_path_datasets()
+    image_path_dataset = tf.data.Dataset.from_tensor_slices(paths[:,0])
+    mask_path_dataset = tf.data.Dataset.from_tensor_slices(paths[:,1])
+    weight_map_path_dataset = tf.data.Dataset.from_tensor_slices(paths[:,2])
+    dataset = tf.data.Dataset.zip((image_path_dataset, mask_path_dataset, weight_map_path_dataset))
+    dataset = dataset.shuffle(38000)
+    dataset = dataset.map(lambda image_path,mask_path,weight_map_path : (
+        load_16bit_grayscale_png_image_and_resize_tf(image_path),
+        tf.numpy_function(load_npy_and_resize, [mask_path], tf.float32),
+        tf.numpy_function(load_npy_and_resize, [weight_map_path], tf.float32)+1.0),
+          num_parallel_calls=tf.data.AUTOTUNE)
+    
+    dataset = dataset.batch(Config.BATCH_SIZE)
+    dataset = dataset.prefetch(Config.AUTOTUNE)
+    return dataset
+
+def load_npy_and_resize(feature_path):
+  feature = np.load(feature_path).astype(np.float32)
+  feature = cv2.resize(feature, Config.IMAGE_SHAPE)
+  return feature
+
+def get_path_datasets(shuffle=False):
+
+    image_paths = glob(os.path.join(Config.TRAIN_DIR, "**", "*.png"), recursive=True)
+    image_paths = sorted(image_paths)
+
+    mask_paths = glob(os.path.join(Config.MASK_DIR, "*.npy"))
+    mask_paths = sorted(mask_paths)
+
+    weight_map_paths = glob(os.path.join(Config.WEIGHT_MAP_DIR, "*.npy"))
+    weight_map_paths = sorted(weight_map_paths)
+
+    if not (len(image_paths) == len(mask_paths) == len(weight_map_paths)):
+        raise Exception("image, mask, weight map datas not equal")
+    
+    dataset = np.stack([image_paths,mask_paths,weight_map_paths], axis=1)
+    if shuffle:
+        np.random.shuffle(dataset)
+
+    return dataset
+
+def load_npy_resize(npy_path):
+    npy = np.load(npy_path).astype(np.float32)
+    npy = cv2.resize(npy, Config.IMAGE_SHAPE)
+    return npy
+
+def load_16bit_grayscale_png_image_and_resize_tf(image_path:str)->tf.Tensor:
+    image_bytes = tf.io.read_file(image_path)
+    png_image = tf.image.decode_png(image_bytes, channels=1, dtype=tf.uint16)
+    png_image = tf.cast(png_image, dtype=tf.float32)
+
+    resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
+    resized_png_image = tf.image.resize(png_image, resized_shape)
+
+    return resized_png_image
+
 
 def make_train_validation_dataset()->Tuple[tf.data.Dataset, tf.data.Dataset]:
 
@@ -96,4 +158,3 @@ def __argument_dataset(dataset):
 def __normalize_dataset_batch(dataset:tf.data.Dataset):
     dataset = dataset.map(lambda batch, mask: (loader.normalize_batch_tf(batch), mask), num_parallel_calls=Config.Dataset.AUTOTUNE)
     return dataset
-
