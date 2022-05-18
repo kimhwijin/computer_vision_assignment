@@ -63,8 +63,7 @@ def load_16bit_grayscale_png_image_and_resize_tf(image_path:str)->tf.Tensor:
     png_image = tf.image.decode_png(image_bytes, channels=1, dtype=tf.uint16)
     png_image = tf.cast(png_image, dtype=tf.float32)
 
-    resized_shape = (tf.constant(Config.IMAGE_SHAPE[0]), tf.constant(Config.IMAGE_SHAPE[1]))
-    resized_png_image = tf.image.resize(png_image, resized_shape)
+    resized_png_image = tf.image.resize(png_image, Config.IMAGE_SHAPE)
 
     return resized_png_image
 
