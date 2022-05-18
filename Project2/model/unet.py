@@ -4,82 +4,19 @@ from scipy.fft import skip_backend
 import tensorflow as tf
 from tensorflow import keras
 from layer.base_layers import *
+import tensorflow.keras.backend as K
 
 def get_weighted_unet_model():
     image_input = tf.keras.layers.Input(shape=Config.MODEL_IMAGE_INPUT_SHAPE)
-    skip_connection = []
-    x = image_input
 
-    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    skip_connection.append(x)
-    x = keras.layers.MaxPool2D(2)(x)
-
-    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    skip_connection.append(x)
-    x = keras.layers.MaxPool2D(2)(x)
-
-    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    skip_connection.append(x)
-    x = keras.layers.MaxPool2D(2)(x)
-
-    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    skip_connection.append(x)
-    x = keras.layers.MaxPool2D(2)(x)
-
-    x = keras.layers.Conv2D(1024, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(1024, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-
-    x = keras.layers.Conv2DTranspose(512, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Concatenate()([x, skip_connection.pop()])
-
-    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    x = keras.layers.Conv2DTranspose(256, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Concatenate()([x, skip_connection.pop()])
-    
-    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    x = keras.layers.Conv2DTranspose(128, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Concatenate()([x, skip_connection.pop()])
-
-    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    x = keras.layers.Conv2DTranspose(64, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Concatenate()([x, skip_connection.pop()])
-
-    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
-
-    x = keras.layers.Conv2D(Config.N_LABELS, 1, kernel_initializer=Config.KERNEL_INITIALIZER, activation='softmax')(x)
-    image_output = x
-
-    normalized_activation = keras.layers.Lambda(lambda x : x / tf.reduce_sum(x, axis=-1, keepdims=True))(image_output)
-    
-    _epsilon = keras.backend.epsilon()
-    clip_activation = keras.layers.Lambda(lambda x : tf.clip_by_value(x, _epsilon, 1 - _epsilon))(normalized_activation)
-    
-    log_activation = keras.layers.Lambda(lambda x : keras.backend.log(x))(clip_activation)
+    x, skip_connection = contracting_path(image_input)
+    image_output = expending_path(x, skip_connection)
 
     weight_map_input = keras.Input(Config.MODEL_WEIGHT_MAP_INPUT_SHAPE)
-    
-    weighted_softmax = keras.layers.multiply([log_activation, weight_map_input])
+    outputs = applying_eighted_map(weight_map_input, image_output)
 
-    outputs = weighted_softmax
     model = keras.Model(inputs=[image_input, weight_map_input], outputs=[outputs])
     return model
-
 
 
 def get_unet_model(from_logits=False):
@@ -146,3 +83,79 @@ def get_unet_model(from_logits=False):
     model = keras.Model(inputs=inputs, outputs=outputs)
     
     return model
+
+
+def contracting_path(image_input):
+    skip_connection = []
+    x = image_input
+
+    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    skip_connection.append(x)
+    x = keras.layers.MaxPool2D(2)(x)
+
+    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    skip_connection.append(x)
+    x = keras.layers.MaxPool2D(2)(x)
+
+    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    skip_connection.append(x)
+    x = keras.layers.MaxPool2D(2)(x)
+
+    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    skip_connection.append(x)
+    x = keras.layers.MaxPool2D(2)(x)
+
+    x = keras.layers.Conv2D(1024, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(1024, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    return x, skip_connection
+
+def expending_path(x, skip_connection):
+
+    x = keras.layers.Conv2DTranspose(512, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Concatenate()([x, skip_connection.pop()])
+
+    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(512, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    x = keras.layers.Conv2DTranspose(256, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Concatenate()([x, skip_connection.pop()])
+    
+    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(256, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    x = keras.layers.Conv2DTranspose(128, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Concatenate()([x, skip_connection.pop()])
+
+    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(128, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    x = keras.layers.Conv2DTranspose(64, 3, 2, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Concatenate()([x, skip_connection.pop()])
+
+    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+    x = keras.layers.Conv2D(64, 3, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER, activation='relu')(x)
+
+    x = keras.layers.Conv2D(Config.N_LABELS, 1, kernel_initializer=Config.KERNEL_INITIALIZER, activation='softmax')(x)
+    image_output = x
+    return image_output
+
+
+def applying_eighted_map(weight_map_input, image_output):
+
+    normalized_activation = keras.layers.Lambda(lambda x : x / tf.reduce_sum(x, axis=-1, keepdims=True))(image_output)
+    _epsilon = K.epsilon()
+    clip_activation = keras.layers.Lambda(lambda x : tf.clip_by_value(x, _epsilon, 1 - _epsilon))(normalized_activation)
+    log_activation = keras.layers.Lambda(lambda x : K.log(x))(clip_activation)
+    weighted_softmax = keras.layers.multiply([log_activation, weight_map_input])
+    outputs = weighted_softmax
+
+    return outputs
