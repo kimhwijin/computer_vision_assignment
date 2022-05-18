@@ -7,10 +7,10 @@ def conv2d_bn_activation(
         x,
         filters, 
         kernel_size,
-        activation=Config.Train.activation,
+        activation=Config.activation,
         strides=(1,1),
         padding='valid',
-        kernel_initializer=Config.Train.kernel_initializer
+        kernel_initializer=Config.KERNEL_INITIALIZER
     ):
 
     conv2d = tf.keras.layers.Conv2D(filters, kernel_size, strides=strides, padding=padding, kernel_initializer=kernel_initializer)

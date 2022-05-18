@@ -30,8 +30,12 @@ class Config:
     NFOLD:int = 8
     IMAGE_SHAPE:Tuple[int,int] = (256, 256)
     SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
+<<<<<<< HEAD
     MASK_STYLE:enums.MASK_STYLE = enums.MASK_STYLE.MULTI_CLASS_MULTI_LABEL
+=======
+>>>>>>> 015adaf ([Project2-feature/Model]: Unet Model, apply weighted map)
     N_LABELS = 3
+    MASK_STYLE:enums.MASK_STYLE = enums.MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     ALREADY_SAVED_MASK:bool = True
     ALREADY_SAVED_WEIGHT_MAP:bool = True
     
@@ -41,8 +45,15 @@ class Config:
     BATCH_SIZE:int = 32
     TRAIN_SHUFFLE_BUFFER_SIZE:int = 30000 // BATCH_SIZE
     VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
+<<<<<<< HEAD
         
     MODEL_INPUT = tf.keras.layers.Input((256,256,1))
+=======
+    
+    MODEL_IMAGE_INPUT_SHAPE = (*IMAGE_SHAPE, 1)
+    MODEL_WEIGHT_MAP_INPUT_SHAPE = (*IMAGE_SHAPE, 1)
+    
+>>>>>>> 015adaf ([Project2-feature/Model]: Unet Model, apply weighted map)
     KERNEL_INITIALIZER:str= enums.KERNEL_INITIALIZER.HE_NORMAL.value
     activation:str=enums.ACTIVATION.RELU.value
 

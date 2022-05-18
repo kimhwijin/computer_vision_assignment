@@ -9,10 +9,17 @@ def get_path_datasets():
     image_paths = glob(os.path.join(Config.TRAIN_DIR, "**", "*.png"), recursive=True)
     image_paths = sorted(image_paths)
 
+<<<<<<< HEAD
     mask_paths = glob(os.path.join(Config.MASK_DIR, "*.png"))
     mask_paths = sorted(mask_paths)
 
     weight_map_paths = glob(os.path.join(Config.WEIGHT_MAP_DIR, "*.png"))
+=======
+    mask_paths = glob(os.path.join(Config.MASK_DIR, "*.npy"))
+    mask_paths = sorted(mask_paths)
+
+    weight_map_paths = glob(os.path.join(Config.WEIGHT_MAP_DIR, "*.npy"))
+>>>>>>> 015adaf ([Project2-feature/Model]: Unet Model, apply weighted map)
     weight_map_paths = sorted(weight_map_paths)
 
     if not (len(image_paths) == len(mask_paths) == len(weight_map_paths)):
