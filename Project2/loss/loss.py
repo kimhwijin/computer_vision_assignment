@@ -2,40 +2,67 @@ from multiprocessing import reduction
 from tensorflow import keras
 import tensorflow.keras.backend as K
 import tensorflow as tf
+
 def weighted_loss(y_true, y_pred):
     return 
 
-def calculate_bce_loss(y_true, y_pred, reduction=True):
-    loss = y_true * K.log(y_pred)
-    loss += (1-y_true) * K.log(1-y_pred)
-    if reduction:
-        loss = K.mean(loss)
-    return -loss
-
-def calculate_bce_weighted_loss(y_true, y_pred, y_weight_map):
-    loss = calculate_bce_loss(y_true, y_pred, reduction=False)
-    return K.sum(K.mean(loss * y_weight_map, axis=0))
+def binary_crossentropy(y_true, y_pred):
+    return 
 
 
-def bce(from_logits=False, label_smoothing=0.0, axis=-1, reduction=keras.losses.Reduction.AUTO):
-    return keras.losses.BinaryCrossentropy(from_logits=from_logits, label_smoothing=label_smoothing, axis=axis, reduction=reduction)
-    
-def binary_crossentropy(y_true, y_pred, y_weight_map):
-    loss_fn = keras.losses.BinaryCrossentropy(reduction=keras.losses.Reduction.NONE)
-    loss = loss_fn(y_true, y_pred)
-    weighted_loss = y_weight_map * loss
-    tf.print(y_true.shape)
-    tf.print(y_pred.shape)
-    tf.print(y_weight_map.shape)
-    tf.print(weighted_loss.shape)
-    return weighted_loss
+def categorical_crossentropy(y_true, y_pred, **kwargs):
+    return K.mean(K.sum(-y_true * K.log(y_pred + K.epsilon()), axis=-1))
 
-def categorical_crossentropy(y_true, y_pred, y_weight_map):
-    loss_fn = keras.losses.CategoricalCrossentropy(reduction=keras.losses.Reduction.NONE)
-    loss = loss_fn(y_true, y_pred)
-    weighted_loss = y_weight_map * loss
-    tf.print(y_true.shape)
-    tf.print(y_pred.shape)
-    tf.print(y_weight_map.shape)
-    tf.print(weighted_loss.shape)
-    return weighted_loss
+def generalized_dice_coefficient(y_true, y_pred):
+    smooth = 1.
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    union = K.sum(y_true_f) + K.sum(y_pred_f)
+    dice = (2. * intersection + smooth) / (union + smooth)
+    return dice
+
+def dice_coefficient(y_true, y_pred):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    union = K.sum(y_true_f) + K.sum(y_pred_f)
+    dice = (2. * intersection + K.epsilon()) / (union + K.epsilon())
+    return dice
+
+def dice_loss(y_true, y_pred):
+    loss = 1 - generalized_dice_coefficient(y_true, y_pred)
+    return loss
+
+def focal_loss_with_logits(logits, targets, y_pred, alpha=0.25, gamma=2.):
+    weight_a = alpha * (1-y_pred) ** gamma * targets
+    weight_b = (1-alpha) * y_pred ** gamma * (1-targets)
+    return (tf.math.log1p(tf.exp(-tf.abs(logits))) + tf.nn.relu(-logits)) * (weight_a + weight_b) + logits * weight_b
+
+def focal_loss(y_true, y_pred):
+    y_pred = tf.clip_by_value(y_pred, K.epsilon(), 1-K.epsilon())
+    logits = tf.math.log(y_pred / (1-y_pred))
+    loss = focal_loss_with_logits(logits, y_true, y_pred)
+    return tf.reduce_mean(loss)
+
+def tversky_index(y_true, y_pred):
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    true_pos = K.sum(y_true_f * y_pred_f)
+    false_neg = K.sum(y_true_f * (1-y_pred_f))
+    false_pos = K.sum((1-y_true_f) * y_pred_f)
+    alpha = 0.7
+    smooth = 1.
+    return (true_pos + smooth) / (true_pos + alpha * false_neg + (1-alpha) * false_pos + smooth)
+
+def tversky_loss(y_true, y_pred):
+    return 1. - tversky_index(y_true, y_pred)
+
+def focal_tversky(y_true, y_pred):
+    pt_1 = tversky_index(y_true, y_pred)
+    gamma = 0.75
+    return K.pow((1-pt_1), gamma)
+
+def log_cosh_dice_loss(y_true, y_pred):
+    x = dice_loss(y_true, y_pred)
+    return tf.math.log((tf.exp(x) + tf.exp(-x)) / 2.0)
