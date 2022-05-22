@@ -2,11 +2,15 @@ import os
 from typing import Tuple
 import enums
 import tensorflow as tf
+import sys
 
 class Config:
     
     DATA_DIR:str = os.path.join(os.getcwd(), "row-data")
-    # DATA_DIR:str = os.path.join('/content', 'computer_vision_assignment', 'Project2', "row-data")
+    IS_COLAB = "google.colab" in sys.modules
+    if IS_COLAB:
+        DATA_DIR:str = os.path.join('/content', 'computer_vision_assignment', 'Project2', "row-data")
+        
     TRAIN_DIR:str = os.path.join(DATA_DIR, "train")
     TRAIN_CSV:str = os.path.join(DATA_DIR, "train.csv")
     
