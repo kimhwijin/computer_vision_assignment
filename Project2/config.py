@@ -10,7 +10,7 @@ class Config:
     IS_COLAB = "google.colab" in sys.modules
     if IS_COLAB:
         DATA_DIR:str = os.path.join('/content', 'computer_vision_assignment', 'Project2', "row-data")
-        
+
     TRAIN_DIR:str = os.path.join(DATA_DIR, "train")
     TRAIN_CSV:str = os.path.join(DATA_DIR, "train.csv")
     
@@ -32,8 +32,8 @@ class Config:
     SF2LF = {_sf:_lf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
     LF2SF = {_lf:_sf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
     NFOLD:int = 8
-    IMAGE_SHAPE:Tuple[int,int] = (256, 256)
-    SEGMENT_SHAPE:Tuple[int,int] = (256, 256)
+    IMAGE_SHAPE:Tuple[int,int] = (224, 224)
+    SEGMENT_SHAPE:Tuple[int,int] = (224, 224)
     N_LABELS = 3
     MASK_STYLE:enums.MASK_STYLE = enums.MASK_STYLE.MULTI_CLASS_MULTI_LABEL
     ALREADY_SAVED_MASK:bool = True
@@ -42,7 +42,7 @@ class Config:
 
     SEED = 1004
     AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE
-    BATCH_SIZE:int = 32
+    BATCH_SIZE:int = 24
     TRAIN_SHUFFLE_BUFFER_SIZE:int = 30000 // BATCH_SIZE
     VALIDATION_SHUFFLE_BUFFER_SIZE:int = TRAIN_SHUFFLE_BUFFER_SIZE // 5
     
