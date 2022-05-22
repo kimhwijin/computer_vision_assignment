@@ -16,17 +16,19 @@ def make_dataset():
     image_path_dataset = tf.data.Dataset.from_tensor_slices(paths[:,0])
     mask_path_dataset = tf.data.Dataset.from_tensor_slices(paths[:,1])
     weight_map_path_dataset = tf.data.Dataset.from_tensor_slices(paths[:,2])
-    dataset = tf.data.Dataset.zip((image_path_dataset, mask_path_dataset, weight_map_path_dataset))
+    x_dataset = tf.data.Dataset.zip((image_path_dataset, weight_map_path_dataset))
+    dataset = tf.data.Dataset.zip((x_dataset, mask_path_dataset))
     dataset = dataset.shuffle(38000)
-    dataset = dataset.map(lambda image_path,mask_path,weight_map_path : (
-        load_16bit_grayscale_png_image_and_resize_tf(image_path),
-        tf.numpy_function(load_npy_and_resize, [mask_path], tf.float32),
-        tf.numpy_function(load_npy_and_resize, [weight_map_path], tf.float32)+1.0),
+    dataset = dataset.map(load_each_paths_to_tensor,
           num_parallel_calls=tf.data.AUTOTUNE)
     
     dataset = dataset.batch(Config.BATCH_SIZE)
     dataset = dataset.prefetch(Config.AUTOTUNE)
     return dataset
+
+def load_each_paths_to_tensor(x_paths, mask_path):
+    image_path, weight_map_path = x_paths
+    return load_16bit_grayscale_png_image_and_resize_tf(image_path), tf.numpy_function(load_npy_and_resize, [mask_path], tf.float32), tf.numpy_function(load_npy_and_resize, [weight_map_path], tf.float32)+1.0
 
 def load_npy_and_resize(feature_path):
   feature = np.load(feature_path).astype(np.float32)
