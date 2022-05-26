@@ -1,4 +1,7 @@
+from calendar import day_abbr
 from typing import Tuple
+
+from click import argument
 from config import Config
 from preprocess.dataframe import transform
 from preprocess.dataframe import split
@@ -10,15 +13,19 @@ import numpy as np
 import cv2
 from glob import glob
 import os
+import albumentations as A
 
 
-def make_dataset(paths):
+def make_dataset(paths, augment=True):
     d1 = tf.data.Dataset.from_tensor_slices(paths[:, 0])
     d2 = tf.data.Dataset.from_tensor_slices(paths[:, 1])
     d3 = tf.data.Dataset.from_tensor_slices(paths[:, 2])
     dataset = tf.data.Dataset.zip((d1,d2,d3))
+    dataset = dataset.shuffle(paths.shape[0], reshuffle_each_iteration=True)
     dataset = dataset.map(load_each_paths_to_tensor,
             num_parallel_calls=tf.data.AUTOTUNE)
+    if augment:
+        dataset = dataset.map(data_augmentation_tf, num_parallel_calls=Config.AUTOTUNE)
     dataset = dataset.batch(Config.BATCH_SIZE)
     dataset = dataset.prefetch(Config.AUTOTUNE)
     return dataset
@@ -39,11 +46,37 @@ def make_dataset_old():
 
 def load_each_paths_to_tensor(image_path, mask_path, weight_map_path):
     x_image = load_16bit_grayscale_png_image_and_resize_tf(image_path)
-    x_weight_map = tf.numpy_function(load_npy_and_resize, [weight_map_path], tf.float32)
+    x_weight_map = tf.expand_dims(tf.numpy_function(load_npy_and_resize, [weight_map_path], tf.float32), axis=-1)
     y_mask = tf.numpy_function(load_npy_and_resize, [mask_path], tf.float32)
     x_image = __normalize(x_image)
     # x_weight_map = __normalize(x_weight_map)
-    return (x_image, x_weight_map), y_mask
+    return x_image, x_weight_map, y_mask
+
+def data_augmentation_tf(x_image, x_weight_map, y_mask):
+    x_image, x_weight_map, y_mask = tf.numpy_function(func=data_augmentation, inp=[x_image, x_weight_map, y_mask], Tout=[tf.float32, tf.float32, tf.float32])
+    return (x_image,x_weight_map), y_mask
+
+def data_augmentation(x_image, x_weight_map, y_mask):
+    data_transforms = A.Compose(
+            [A.HorizontalFlip(p=0.5),
+            # A.VerticalFlip(p=0.5),
+            A.ShiftScaleRotate(shift_limit=0.0625, scale_limit=0.05, rotate_limit=10, p=0.5),
+            A.OneOf([
+                A.GridDistortion(num_steps=5, distort_limit=0.05, p=1.0),
+    # #             A.OpticalDistortion(distort_limit=0.05, shift_limit=0.05, p=1.0),
+                A.ElasticTransform(alpha=1, sigma=50, alpha_affine=50, p=1.0)
+            ], p=0.25),
+            A.CoarseDropout(max_holes=8, max_height=Config.IMAGE_SHAPE[0]//20, max_width=Config.IMAGE_SHAPE[1]//20,
+                            min_holes=5, fill_value=0, mask_fill_value=0, p=0.5),
+            ], 
+            additional_targets={'weight_map': 'image', 'mask': 'image'},
+            p=1.0
+    )
+    aug_data = data_transforms(image=x_image, weight_map=x_weight_map, mask=y_mask)
+    x_image = aug_data['image']
+    x_weight_map = aug_data['weight_map']
+    y_mask = aug_data['mask']
+    return x_image, x_weight_map, y_mask
 
 
 def load_npy_and_resize(feature_path):
