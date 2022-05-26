@@ -28,9 +28,12 @@ def concat(inputs, **kwargs):
 def maxpool2d(x, pool_size, strides,**kwargs):
     return tf.keras.layers.MaxPool2D(pool_size=pool_size, strides=strides, **kwargs)(x)
 
-
-def upconv2d(x, size=(2,2), **kwargs):
+def upsample2d(x, size=(2,2), **kwargs):
     return tf.keras.layers.UpSampling2D(size=size, **kwargs)(x)
+
+def upconv2d(x,filters, kernel_size=3, strides=2, **kwargs):
+    return tf.keras.layers.Conv2DTranspose(filters, kernel_size, strides, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER)(x)
+    # return tf.keras.layers.Conv(size=size, **kwargs)(x)
 
 def crop2d(x, cropping, **kwargs):
     return tf.keras.layers.Cropping2D(cropping, **kwargs)(x)

@@ -1,5 +1,6 @@
 from typing import Tuple
 from sklearn.model_selection import GroupKFold
+from sklearn.model_selection import StratifiedGroupKFold
 from config import Config
 import pandas as pd 
 
@@ -12,11 +13,13 @@ def __encode_segment_flag_columns_to_single_string_column(df:pd.DataFrame)->pd.D
     df["which_segments"] = df["large_bowel_flag"].astype(int).astype(str) \
                             + df["small_bowel_flag"].astype(int).astype(str) \
                             + df["stomach_flag"].astype(int).astype(str)
+    df["filename"] = df["full_filepath"].apply(lambda x: x.rsplit('/', 1)[-1].rsplit('.',1)[0])
     return df
 
 def __split_kfold_train_validation_and_sampling_dataframe(df:pd.DataFrame)->Tuple[pd.DataFrame, pd.DataFrame]:
     group_kfold = GroupKFold(n_splits=Config.NFOLD)
-
+    group_kfold = StratifiedGroupKFold(n_splits=Config.NFOLD)
+    
     for train_idxs, valid_idxs in group_kfold.split(df["id"], df["which_segments"], df["case_id"]):
         
         fold_train_df = df.iloc[train_idxs]

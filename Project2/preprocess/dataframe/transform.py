@@ -13,7 +13,7 @@ if False:
     make_weight_map_and_save()
 
 
-def get_train_csv_to_trainable_csv():
+def get_train_csv_and_transform():
 
     df = pd.read_csv(Config.TRAIN_CSV)
     all_train_images = glob(os.path.join(Config.TRAIN_DIR, "**", "*.png"), recursive=True)
@@ -26,9 +26,9 @@ def get_train_csv_to_trainable_csv():
     df = __slice_pixel_spacing(df)
     df = __merge_LF_rows_to_single_row_and_multiple_columns(df)
     df = __reorder_columns_of_dataframe(df, __get_order_of_columns(False))
-
-    df.to_csv(Config.TRAINABLE_CSV)
-    return Config.TRAINABLE_CSV
+ 
+    # df.to_csv(Config.TRAINABLE_CSV)
+    return df
 
 def make_RLE_encoded_masks_to_single_png_mask_and_save(df):
     if Config.ALREADY_SAVED_MASK:
@@ -153,7 +153,7 @@ def __get_order_of_columns(is_test:bool)->list:
                      "slice_height", "slice_width", 
                      "pixel_spacing_height", "pixel_spacing_height", 
                      "case_id_str", "case_id", 
-                     "day_num_str", "day_num", 
+                     "day_number_str", "day_number", 
                      "slice_id", "predicted"]
     if is_test:
         order_of_column.insert(1, "class")

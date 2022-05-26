@@ -20,7 +20,7 @@ def get_weighted_unet_model():
 
 
 def get_unet_model(from_logits=False):
-    inputs = tf.keras.layers.Input((256,256,1))
+    inputs = tf.keras.layers.Input((*Config.IMAGE_SHAPE,1))
     x = inputs
     
     x = conv2d_bn_activation(x, 64, 3, padding='same')
@@ -50,30 +50,32 @@ def get_unet_model(from_logits=False):
     x = conv2d_bn_activation(x, 1024, 3, padding='same')
     x = conv2d_bn_activation(x, 1024, 3, padding='same')
 
-    x = upconv2d(x)
+    x = upconv2d(x, 512)
     x = concat([skip_4, x])
 
     x = conv2d_bn_activation(x, 512, 3, padding='same')
     x = conv2d_bn_activation(x, 512, 3, padding='same')
 
-    x = upconv2d(x)
+    x = upconv2d(x, 256)
     x = concat([skip_3, x])
 
     x = conv2d_bn_activation(x, 256, 3, padding='same')
     x = conv2d_bn_activation(x, 256, 3, padding='same')
 
-    x = upconv2d(x)
+    x = upconv2d(x, 128)
     x = concat([skip_2, x])
 
     x = conv2d_bn_activation(x, 128, 3, padding='same')
     x = conv2d_bn_activation(x, 128, 3, padding='same')
 
-    x = upconv2d(x)
+    x = upconv2d(x, 64)
     x = concat([skip_1, x])
 
     x = conv2d_bn_activation(x, 64, 3, padding='same')
     x = conv2d_bn_activation(x, 64, 3, padding='same')
-    x = conv2d_bn_activation(x, Config.N_LABELS, 3, padding='same')
+
+    x = keras.layers.Conv2D(Config.N_LABELS, 1, padding='same', kernel_initializer=Config.KERNEL_INITIALIZER)(x)
+
     
     if not from_logits:
         x = activation(x, ACTIVATION.SIGMOID.value)
