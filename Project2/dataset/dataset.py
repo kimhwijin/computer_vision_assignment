@@ -70,7 +70,7 @@ def data_augmentation(x_image, x_weight_map, y_mask):
                             min_holes=5, fill_value=0, mask_fill_value=0, p=0.5),
             ], 
             additional_targets={'weight_map': 'image', 'mask': 'image'},
-            p=1.0
+            p=0.66
     )
     aug_data = data_transforms(image=x_image, weight_map=x_weight_map, mask=y_mask)
     x_image = aug_data['image']

@@ -1,4 +1,5 @@
 from multiprocessing import reduction
+from markupsafe import escape_silent
 from tensorflow import keras
 import tensorflow.keras.backend as K
 import tensorflow as tf
@@ -66,3 +67,14 @@ def focal_tversky(y_true, y_pred):
 def log_cosh_dice_loss(y_true, y_pred):
     x = dice_loss(y_true, y_pred)
     return tf.math.log((tf.exp(x) + tf.exp(-x)) / 2.0)
+
+def binary_focal_crossentropy(y_true, y_pred):
+    pass
+
+def binary_crossentropy_with_weight(y_true, y_pred, weight_map):
+    return -weight_map * (y_true * K.log(y_pred+K.epsilon()) + (1-y_true) * K.log(1-y_pred+K.epsilon()))
+
+def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0):
+    p_t = y_true * y_pred + (1-y_true)*(1-y_pred)
+    focal_factor = tf.pow(1. - p_t, gamma)
+    return focal_factor * binary_focal_crossentropy(y_true, y_pred, weight_map)
