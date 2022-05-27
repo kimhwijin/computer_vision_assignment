@@ -50,9 +50,10 @@ def load_each_paths_to_tensor(image_path, mask_path, weight_map_path):
     y_mask = tf.numpy_function(load_npy_and_resize, [mask_path], tf.float32)
     x_image = __normalize(x_image)
     # x_weight_map = __normalize(x_weight_map)
-    return x_image, x_weight_map, y_mask
+    return (x_image, x_weight_map), y_mask
 
-def data_augmentation_tf(x_image, x_weight_map, y_mask):
+def data_augmentation_tf(x, y_mask):
+    x_image, x_weight_map = x
     x_image, x_weight_map, y_mask = tf.numpy_function(func=data_augmentation, inp=[x_image, x_weight_map, y_mask], Tout=[tf.float32, tf.float32, tf.float32])
     return (x_image,x_weight_map), y_mask
 

@@ -4,12 +4,6 @@ from tensorflow import keras
 import tensorflow.keras.backend as K
 import tensorflow as tf
 
-def weighted_loss(y_true, y_pred):
-    return 
-
-def binary_crossentropy(y_true, y_pred):
-    return 
-
 
 def categorical_crossentropy(y_true, y_pred, **kwargs):
     return K.mean(K.sum(-y_true * K.log(y_pred + K.epsilon()), axis=-1))
@@ -77,4 +71,4 @@ def binary_crossentropy_with_weight(y_true, y_pred, weight_map):
 def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0):
     p_t = y_true * y_pred + (1-y_true)*(1-y_pred)
     focal_factor = tf.pow(1. - p_t, gamma)
-    return focal_factor * binary_focal_crossentropy(y_true, y_pred, weight_map)
+    return focal_factor * binary_crossentropy_with_weight(y_true, y_pred, weight_map)
