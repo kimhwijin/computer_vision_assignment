@@ -39,7 +39,7 @@ class Config:
     ALREADY_SAVED_MASK:bool = True
     ALREADY_SAVED_WEIGHT_MAP:bool = True
     
-
+    IMAGE_MAX_VALUE=15865
     SEED = 1004
     AUTOTUNE:tf.data.AUTOTUNE = tf.data.AUTOTUNE
     BATCH_SIZE:int = 24

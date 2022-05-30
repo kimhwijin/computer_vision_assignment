@@ -213,8 +213,7 @@ def __rescale_from_0_upto_1(x, y):
     return data, (mask, weight_map)
     
 def __normalize(x):
-    x = x - K.min(x, axis=0)
-    x = x / (K.max(x, axis=0) + K.epsilon()) 
+    x = x / (Config.IMAGE_MAX_VALUE + K.epsilon())
     return x
 
 def __batch_dataset(dataset:tf.data.Dataset)->tf.data.Dataset:
