@@ -17,7 +17,7 @@ def generalized_dice_coefficient(y_true, y_pred):
     dice = (2. * intersection + smooth) / (union + smooth)
     return dice
 
-def dice_coefficient(y_true, y_pred):
+def dice_coefficient(y_true, y_pred,):
     y_true_f = K.flatten(y_true)
     y_pred_f = K.flatten(y_pred)
     intersection = K.sum(y_true_f * y_pred_f)
@@ -70,8 +70,3 @@ def binary_focal_crossentropy(y_true, y_pred, gamma=2.0, alpha=0.25):
 
 def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0, alpha=0.25):
     return weight_map * binary_focal_crossentropy(y_true, y_pred, gamma, alpha)
-
-# def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0):
-#     p_t = y_true * y_pred + (1-y_true)*(1-y_pred)
-#     focal_factor = tf.pow(1. - p_t, gamma)
-#     return focal_factor * binary_crossentropy_with_weight(y_true, y_pred, weight_map)
