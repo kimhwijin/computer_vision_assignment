@@ -32,7 +32,7 @@ class Config:
     SF2LF = {_sf:_lf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
     LF2SF = {_lf:_sf for _sf, _lf in zip(SF_CLASSES, CLASSES)}
     NFOLD:int = 8
-    IMAGE_SHAPE:Tuple[int,int] = (224, 224)
+    IMAGE_SHAPE:Tuple[int,int] = (None, None)
     SEGMENT_SHAPE:Tuple[int,int] = (224, 224)
     N_LABELS = 3
     MASK_STYLE:enums.MASK_STYLE = enums.MASK_STYLE.MULTI_CLASS_MULTI_LABEL

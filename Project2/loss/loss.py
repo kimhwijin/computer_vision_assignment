@@ -62,13 +62,16 @@ def log_cosh_dice_loss(y_true, y_pred):
     x = dice_loss(y_true, y_pred)
     return tf.math.log((tf.exp(x) + tf.exp(-x)) / 2.0)
 
-def binary_focal_crossentropy(y_true, y_pred):
-    pass
+def binary_focal_crossentropy(y_true, y_pred, gamma=2.0, alpha=0.25):
+    weight_a = alpha * K.pow(1-y_pred, gamma) * y_true * K.log(y_pred+K.epsilon())
+    weight_b = alpha * K.pow(y_pred, gamma) * (1-y_true) * K.log(1-y_pred+K.epsilon())
+    return -(weight_a + weight_b)
 
-def binary_crossentropy_with_weight(y_true, y_pred, weight_map):
-    return -weight_map * (y_true * K.log(y_pred+K.epsilon()) + (1-y_true) * K.log(1-y_pred+K.epsilon()))
 
-def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0):
-    p_t = y_true * y_pred + (1-y_true)*(1-y_pred)
-    focal_factor = tf.pow(1. - p_t, gamma)
-    return focal_factor * binary_crossentropy_with_weight(y_true, y_pred, weight_map)
+def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0, alpha=0.25):
+    return weight_map * binary_focal_crossentropy(y_true, y_pred, gamma, alpha)
+
+# def binary_focal_crossentropy_with_weight(y_true, y_pred, weight_map, gamma=2.0):
+#     p_t = y_true * y_pred + (1-y_true)*(1-y_pred)
+#     focal_factor = tf.pow(1. - p_t, gamma)
+#     return focal_factor * binary_crossentropy_with_weight(y_true, y_pred, weight_map)

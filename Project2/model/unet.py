@@ -20,7 +20,7 @@ def get_weighted_unet_model():
 
 
 def get_unet_model(from_logits=False):
-    inputs = tf.keras.layers.Input((*Config.IMAGE_SHAPE,1))
+    inputs = tf.keras.layers.Input((None,None,1))
     x = inputs
     
     x = conv2d_bn_activation(x, 64, 3, padding='same')
